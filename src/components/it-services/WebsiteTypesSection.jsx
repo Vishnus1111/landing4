@@ -72,15 +72,88 @@ const cardThemes = {
 };
 
 const websiteTypes = [
-  { id: 'informational', icon: Globe, title: 'Informational', preview: 'Service overview + trust pages', featureHint: 'Best for: brochures, institutions', priceHint: 'Starts at ₹35k' },
-  { id: 'corporate', icon: Building2, title: 'Corporate', preview: 'Lead-driven company profile', featureHint: 'Includes: case studies + inquiry flow', priceHint: 'Starts at ₹55k' },
-  { id: 'ecommerce', icon: ShoppingCart, title: 'E-commerce', preview: 'Catalog, cart, and secure checkout', featureHint: 'Includes: payments + inventory', priceHint: 'Starts at ₹95k' },
-  { id: 'portfolio', icon: BookOpen, title: 'Portfolio', preview: 'Project-first personal brand site', featureHint: 'Best for: creators and freelancers', priceHint: 'Starts at ₹30k' },
-  { id: 'blog', icon: Globe, title: 'Blog / Content', preview: 'CMS-ready publishing experience', featureHint: 'Includes: SEO structure + taxonomy', priceHint: 'Starts at ₹45k' },
-  { id: 'educational', icon: GraduationCap, title: 'E-Learning', preview: 'Courses, progress, and learner UX', featureHint: 'Includes: lessons + assessments', priceHint: 'Starts at ₹1.2L' },
-  { id: 'community', icon: Users, title: 'Community', preview: 'User profiles with engagement loops', featureHint: 'Includes: feed + moderation basics', priceHint: 'Starts at ₹1.5L' },
-  { id: 'landing', icon: MousePointerClick, title: 'Landing Page', preview: 'Single-goal conversion experience', featureHint: 'Includes: CTA blocks + analytics setup', priceHint: 'Starts at ₹25k' },
-  { id: 'portal', icon: LayoutDashboard, title: 'Portal', preview: 'Role-based dashboard workflows', featureHint: 'Includes: auth + multi-module access', priceHint: 'Starts at ₹1.8L' },
+  {
+    id: 'informational',
+    icon: Globe,
+    title: 'Informational Websites',
+    purpose: 'Share information, not transact',
+    examples: 'Company profiles, schools, NGOs, government portals',
+    features: ['Static or semi-dynamic pages', 'About, Services, Contact, Policies', 'Minimal user interaction'],
+    tech: 'HTML, CSS, basic CMS',
+    risk: 'Becomes irrelevant if not updated',
+  },
+  {
+    id: 'corporate',
+    icon: Building2,
+    title: 'Business / Corporate Websites',
+    purpose: 'Establish credibility and generate leads',
+    examples: 'IT firms, consultancies, startups',
+    features: ['Service pages', 'Lead forms', 'Case studies', 'SEO-focused content'],
+    kpi: 'Conversions, inquiries, trust signals',
+  },
+  {
+    id: 'ecommerce',
+    icon: ShoppingCart,
+    title: 'E-commerce Websites',
+    purpose: 'Sell products or services online',
+    examples: 'Amazon, Flipkart, niche D2C stores',
+    features: ['Product catalogue', 'Cart & checkout', 'Payment gateway', 'Order & inventory management'],
+    complexity: 'High',
+    concerns: 'Security, performance, scalability',
+  },
+  {
+    id: 'portfolio',
+    icon: BookOpen,
+    title: 'Portfolio Websites',
+    purpose: 'Showcase skills and work',
+    examples: 'Designers, developers, photographers',
+    features: ['Project galleries', 'Resume/CV', 'Contact form'],
+    successMetric: 'Clarity + visual impact',
+  },
+  {
+    id: 'blog',
+    icon: Globe,
+    title: 'Blogging / Content Websites',
+    purpose: 'Publish articles and long-form content',
+    examples: 'Medium-style blogs, news portals',
+    features: ['Categories & tags', 'CMS', 'Comments', 'SEO optimisation'],
+    revenue: 'Ads, sponsorships, subscriptions',
+  },
+  {
+    id: 'educational',
+    icon: GraduationCap,
+    title: 'Educational / E-Learning Websites',
+    purpose: 'Teach and assess users',
+    examples: 'Online schools, coaching platforms',
+    features: ['Courses & lessons', 'Video hosting', 'Quizzes & certificates', 'User progress tracking'],
+    advanced: 'LMS, role-based access',
+  },
+  {
+    id: 'community',
+    icon: Users,
+    title: 'Community / Social Websites',
+    purpose: 'User interaction and content creation',
+    examples: 'Forums, social networks',
+    features: ['User profiles', 'Messaging', 'Feeds', 'Moderation tools'],
+    challenge: 'Content moderation & scaling',
+  },
+  {
+    id: 'landing',
+    icon: MousePointerClick,
+    title: 'Landing Pages',
+    purpose: 'One action only (sign up, buy, download)',
+    features: ['Clear CTA', 'Minimal navigation', 'Conversion-driven copy'],
+    usage: 'Used heavily in marketing campaigns',
+  },
+  {
+    id: 'portal',
+    icon: LayoutDashboard,
+    title: 'Portal Websites',
+    purpose: 'Central access point for multiple services',
+    examples: 'Employee portals, government service portals',
+    features: ['Login-based access', 'Role management', 'Multiple subsystems'],
+    architecture: 'Architecture-heavy',
+  },
 ];
 
 export default function WebsiteTypesSection() {
@@ -193,22 +266,47 @@ export default function WebsiteTypesSection() {
                       <h3 className="font-semibold text-[#000066] leading-snug">{type.title}</h3>
                     </div>
 
-                    <div className="rounded-xl border border-[#e8ecf7] bg-white overflow-hidden mb-4">
-                      <div className="h-8 px-3 flex items-center gap-1.5 border-b border-[#eef2ff] bg-[#f8faff]">
-                        <span className="w-2 h-2 rounded-full bg-[#dbe4ff]" />
-                        <span className="w-2 h-2 rounded-full bg-[#dbe4ff]" />
-                        <span className="w-2 h-2 rounded-full bg-[#dbe4ff]" />
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Purpose</p>
+                        <p className="text-gray-900 leading-relaxed">{type.purpose}</p>
                       </div>
-                      <div className="p-3 space-y-2.5">
-                        <div className="h-2.5 rounded-full bg-[#edf2ff] w-[75%]" />
-                        <div className="h-2.5 rounded-full bg-[#edf2ff] w-[60%]" />
-                        <div className="h-8 rounded-lg" style={{ backgroundColor: `${theme.accent}22` }} />
-                      </div>
-                    </div>
 
-                    <p className="text-sm text-gray-900 mb-2">{type.preview}</p>
-                    <p className="text-xs text-gray-500 mb-3">{type.featureHint}</p>
-                    <p className="text-sm font-semibold" style={{ color: theme.accent }}>{type.priceHint}</p>
+                      {type.examples && (
+                        <div>
+                          <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Examples</p>
+                          <p className="text-gray-900 leading-relaxed">{type.examples}</p>
+                        </div>
+                      )}
+
+                      <div>
+                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Key Features</p>
+                        <ul className="space-y-1.5">
+                          {type.features.map((feature) => (
+                            <li key={feature} className="flex items-start gap-2 text-gray-900 leading-relaxed">
+                              <span className="w-1.5 h-1.5 rounded-full mt-2" style={{ backgroundColor: theme.accent }} />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {(type.tech || type.risk || type.kpi || type.complexity || type.concerns || type.successMetric || type.revenue || type.advanced || type.challenge || type.usage || type.architecture) && (
+                        <div className="p-3 rounded-xl bg-[#f8f9fb] border border-[#e9edfb] space-y-1.5 text-xs sm:text-sm">
+                          {type.tech && <p><span className="font-semibold text-[#000066]">Typical tech:</span> <span className="text-gray-600">{type.tech}</span></p>}
+                          {type.risk && <p><span className="font-semibold text-[#000066]">Risk:</span> <span className="text-gray-600">{type.risk}</span></p>}
+                          {type.kpi && <p><span className="font-semibold text-[#000066]">KPIs:</span> <span className="text-gray-600">{type.kpi}</span></p>}
+                          {type.complexity && <p><span className="font-semibold text-[#000066]">Complexity:</span> <span className="text-gray-600">{type.complexity}</span></p>}
+                          {type.concerns && <p><span className="font-semibold text-[#000066]">Critical concerns:</span> <span className="text-gray-600">{type.concerns}</span></p>}
+                          {type.successMetric && <p><span className="font-semibold text-[#000066]">Success metric:</span> <span className="text-gray-600">{type.successMetric}</span></p>}
+                          {type.revenue && <p><span className="font-semibold text-[#000066]">Revenue models:</span> <span className="text-gray-600">{type.revenue}</span></p>}
+                          {type.advanced && <p><span className="font-semibold text-[#000066]">Advanced:</span> <span className="text-gray-600">{type.advanced}</span></p>}
+                          {type.challenge && <p><span className="font-semibold text-[#000066]">Biggest challenge:</span> <span className="text-gray-600">{type.challenge}</span></p>}
+                          {type.usage && <p><span className="font-semibold text-[#000066]">Note:</span> <span className="text-gray-600">{type.usage}</span></p>}
+                          {type.architecture && <p><span className="font-semibold text-[#000066]">Architecture:</span> <span className="text-gray-600">{type.architecture}</span></p>}
+                        </div>
+                      )}
+                    </div>
                   </button>
                 </motion.div>
               );
