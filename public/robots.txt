@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://meilleuranalytics.com/sitemap.xml

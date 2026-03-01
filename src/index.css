@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+	@keyframes premiumGlowPulse {
+		0% {
+			box-shadow: 0 8px 20px rgba(245, 158, 11, 0.12);
+		}
+		50% {
+			box-shadow: 0 12px 30px rgba(245, 158, 11, 0.22);
+		}
+		100% {
+			box-shadow: 0 8px 20px rgba(245, 158, 11, 0.12);
+		}
+	}
+
+	.animate-premium-glow-once {
+		animation: premiumGlowPulse 1s ease-out 0.4s 1;
+	}
+}
