@@ -19,7 +19,7 @@ const services = [
     },
     {
         icon: BarChart3,
-        title: "IT Services & Analytics",
+        title: "IT Services",
         description: "Analytics-driven IT services that convert raw data into insights.",
         highlights: [
             "Data analytics & reporting",

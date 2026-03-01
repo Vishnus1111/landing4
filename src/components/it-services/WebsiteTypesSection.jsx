@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Globe, Building2, ShoppingCart, GraduationCap, LayoutDashboard, Check, BookOpen, Users, MousePointerClick } from 'lucide-react';
+import { Globe, Building2, ShoppingCart, GraduationCap, LayoutDashboard, BookOpen, Users, MousePointerClick, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const cardThemes = {
   informational: {
@@ -72,18 +72,54 @@ const cardThemes = {
 };
 
 const websiteTypes = [
-  { id: 'informational', icon: Globe, title: 'Informational Websites', purpose: 'Share information, not transact.', examples: 'Company profiles, schools, NGOs, government portals', features: ['Static or semi-dynamic pages', 'About, Services, Contact, Policies', 'Minimal user interaction', 'Typical tech: HTML, CSS, basic CMS'], risk: 'Becomes irrelevant if not updated', complexity: 1 },
-  { id: 'corporate', icon: Building2, title: 'Business / Corporate Websites', purpose: 'Establish credibility and generate leads.', examples: 'IT firms, consultancies, startups', features: ['Service pages', 'Lead forms', 'Case studies', 'SEO-focused content'], kpi: 'Conversions, inquiries, trust signals', complexity: 2 },
-  { id: 'ecommerce', icon: ShoppingCart, title: 'E-commerce Websites', purpose: 'Sell products or services online.', examples: 'Amazon, Flipkart, niche D2C stores', features: ['Product catalogue', 'Cart & checkout', 'Payment gateway', 'Order & inventory management'], note: 'Complexity: High. Critical concerns: Security, performance, scalability.', complexity: 4 },
-  { id: 'portfolio', icon: BookOpen, title: 'Portfolio Websites', purpose: 'Showcase skills and work.', examples: 'Designers, developers, photographers', features: ['Project galleries', 'Resume / CV', 'Contact form'], kpi: 'Clarity + visual impact', complexity: 1 },
-  { id: 'blog', icon: Globe, title: 'Blogging / Content Websites', purpose: 'Publish articles and long-form content.', examples: 'Medium-style blogs, news portals', features: ['Categories & tags', 'CMS', 'Comments', 'SEO optimisation'], note: 'Revenue models: Ads, sponsorships, subscriptions', complexity: 2 },
-  { id: 'educational', icon: GraduationCap, title: 'Educational / E-Learning Websites', purpose: 'Teach and assess users.', examples: 'Online schools, coaching platforms', features: ['Courses & lessons', 'Video hosting', 'Quizzes & certificates', 'User progress tracking'], note: 'Advanced: LMS, role-based access', complexity: 4 },
-  { id: 'community', icon: Users, title: 'Community / Social Websites', purpose: 'User interaction and content creation.', examples: 'Forums, social networks', features: ['User profiles', 'Messaging', 'Feeds', 'Moderation tools'], note: 'Biggest challenge: Content moderation & scaling', complexity: 5 },
-  { id: 'landing', icon: MousePointerClick, title: 'Landing Pages', purpose: 'One action only (sign up, buy, download).', examples: 'Marketing campaigns, product launches', features: ['Clear CTA', 'Minimal navigation', 'Conversion-driven copy'], note: 'Used heavily in marketing campaigns', complexity: 1 },
-  { id: 'portal', icon: LayoutDashboard, title: 'Portal Websites', purpose: 'Central access point for multiple services.', examples: 'Employee portals, government service portals', features: ['Login-based access', 'Role management', 'Multiple subsystems'], note: 'Architecture-heavy', complexity: 5 },
+  { id: 'informational', icon: Globe, title: 'Informational', preview: 'Service overview + trust pages', featureHint: 'Best for: brochures, institutions', priceHint: 'Starts at ₹35k' },
+  { id: 'corporate', icon: Building2, title: 'Corporate', preview: 'Lead-driven company profile', featureHint: 'Includes: case studies + inquiry flow', priceHint: 'Starts at ₹55k' },
+  { id: 'ecommerce', icon: ShoppingCart, title: 'E-commerce', preview: 'Catalog, cart, and secure checkout', featureHint: 'Includes: payments + inventory', priceHint: 'Starts at ₹95k' },
+  { id: 'portfolio', icon: BookOpen, title: 'Portfolio', preview: 'Project-first personal brand site', featureHint: 'Best for: creators and freelancers', priceHint: 'Starts at ₹30k' },
+  { id: 'blog', icon: Globe, title: 'Blog / Content', preview: 'CMS-ready publishing experience', featureHint: 'Includes: SEO structure + taxonomy', priceHint: 'Starts at ₹45k' },
+  { id: 'educational', icon: GraduationCap, title: 'E-Learning', preview: 'Courses, progress, and learner UX', featureHint: 'Includes: lessons + assessments', priceHint: 'Starts at ₹1.2L' },
+  { id: 'community', icon: Users, title: 'Community', preview: 'User profiles with engagement loops', featureHint: 'Includes: feed + moderation basics', priceHint: 'Starts at ₹1.5L' },
+  { id: 'landing', icon: MousePointerClick, title: 'Landing Page', preview: 'Single-goal conversion experience', featureHint: 'Includes: CTA blocks + analytics setup', priceHint: 'Starts at ₹25k' },
+  { id: 'portal', icon: LayoutDashboard, title: 'Portal', preview: 'Role-based dashboard workflows', featureHint: 'Includes: auth + multi-module access', priceHint: 'Starts at ₹1.8L' },
 ];
 
 export default function WebsiteTypesSection() {
+  const scrollRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const goToCard = (index) => {
+    const clamped = Math.max(0, Math.min(index, websiteTypes.length - 1));
+    const card = scrollRef.current?.querySelector(`[data-index="${clamped}"]`);
+    card?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    setActiveIndex(clamped);
+  };
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+
+    const containerRect = scrollRef.current.getBoundingClientRect();
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    const cards = Array.from(scrollRef.current.querySelectorAll('[data-index]'));
+
+    let nearestIndex = activeIndex;
+    let minDistance = Number.POSITIVE_INFINITY;
+
+    cards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const distance = Math.abs(containerCenter - cardCenter);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestIndex = Number(card.getAttribute('data-index'));
+      }
+    });
+
+    if (nearestIndex !== activeIndex) {
+      setActiveIndex(nearestIndex);
+    }
+  };
+
   return (
     <section id="website-types" className="py-20 px-6 lg:px-12 bg-[#f8f9fb]">
       <div className="container mx-auto max-w-7xl">
@@ -91,74 +127,122 @@ export default function WebsiteTypesSection() {
           <p className="text-sm font-semibold text-[#1a8a6e] tracking-wider uppercase mb-3">Website Types</p>
           <h2 className="text-3xl md:text-4xl font-bold text-[#000066] mb-3">What Are You Looking For?</h2>
           <div className="w-12 h-1 bg-[#eef4f3] rounded-full mx-auto mb-4" />
-          <p className="text-base text-gray-500 max-w-2xl mx-auto">Different goals require different solutions. Explore all website types with their purpose, features, and best use cases.</p>
+          <p className="text-base text-gray-500 max-w-2xl mx-auto">Choose your ideal website format through an interactive carousel. Center cards stay in focus while side cards stay subtle for fast comparison.</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {websiteTypes.map((type, index) => (
-            <motion.div
-              key={type.id}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.04 }}
-              className="h-full"
-            >
-              {(() => {
-                const theme = cardThemes[type.id];
-                return (
-                  <div
-                    className={`group h-full p-6 rounded-2xl border border-gray-100 border-l-4 bg-white shadow-[0_8px_25px_rgba(0,0,0,0.06)] hover:-translate-y-1.5 hover:shadow-[0_12px_35px_rgba(0,0,0,0.12)] hover:ring-2 ${theme.hoverGlowClass} transition-all duration-300 ease-out`}
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#f8f9fb] to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#f8f9fb] to-transparent z-10" />
+
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex gap-3 md:gap-4 overflow-x-auto overflow-y-visible px-2 md:px-8 pb-6 pt-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
+          >
+            {websiteTypes.map((type, index) => {
+              const theme = cardThemes[type.id];
+              const offset = index - activeIndex;
+              const distance = Math.abs(offset);
+              const isCenter = distance === 0;
+              const isLeft = offset < 0;
+
+              const rotateY = isCenter ? 0 : isLeft ? Math.min(20 + (distance - 1) * 6, 30) : -Math.min(20 + (distance - 1) * 6, 30);
+              const translateX = isCenter ? 0 : isLeft ? -Math.min(40 + (distance - 1) * 14, 70) : Math.min(40 + (distance - 1) * 14, 70);
+              const scale = isCenter ? 1 : distance === 1 ? 0.9 : 0.84;
+              const opacity = isCenter ? 1 : distance === 1 ? 0.6 : 0.38;
+              const depth = isCenter ? 52 : distance === 1 ? 10 : -20;
+
+              return (
+                <motion.div
+                  key={type.id}
+                  data-index={index}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, ease: 'easeOut' }}
+                  animate={{
+                    scale,
+                    opacity,
+                    y: isCenter ? 0 : 8,
+                    x: translateX,
+                    z: depth,
+                    rotateY,
+                  }}
+                  className="snap-center shrink-0 w-[82%] sm:w-[56%] lg:w-[34%] xl:w-[24%]"
+                  style={{
+                    transformStyle: 'preserve-3d',
+                    zIndex: Math.max(1, 20 - distance),
+                    transition: 'all 0.4s ease',
+                    willChange: 'transform, opacity',
+                  }}
+                >
+                  <button
+                    onClick={() => goToCard(index)}
+                    className={`group w-full text-left h-full p-5 rounded-2xl border border-gray-100 border-l-4 bg-white shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out ${theme.hoverGlowClass} ${isCenter ? 'ring-2 ring-[#1a8a6e]/20' : ''}`}
                     style={{
                       borderLeftColor: theme.accent,
                       background: theme.cardBackground || '#ffffff',
+                      transformStyle: 'preserve-3d',
                     }}
                   >
-                <div className="flex items-start gap-4 mb-4">
-                  <div className={`icon w-11 h-11 rounded-xl flex items-center justify-center ${theme.iconBgClass} transition-transform duration-300 group-hover:scale-110`}>
-                    <type.icon className="w-[22px] h-[22px]" color={theme.iconColor} strokeWidth={2.5} />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-[#000066] leading-snug">{type.title}</h3>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="mb-3">
-                    <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Purpose</p>
-                    <p className="text-sm text-gray-900">{type.purpose}</p>
-                  </div>
-
-                  <div className="mb-3">
-                    <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Examples</p>
-                    <p className="text-sm text-gray-900">{type.examples}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-2">Key Features</p>
-                    <div className="space-y-1.5">
-                      {type.features.map((feature) => (
-                        <div key={feature} className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 flex-shrink-0" color="#16A34A" strokeWidth={2.7} />
-                          <span className="text-sm text-gray-900">{feature}</span>
-                        </div>
-                      ))}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${theme.iconBgClass}`}>
+                        <type.icon className="w-5 h-5" color={theme.iconColor} strokeWidth={2.3} />
+                      </div>
+                      <h3 className="font-semibold text-[#000066] leading-snug">{type.title}</h3>
                     </div>
-                  </div>
 
-                  {(type.note || type.kpi || type.risk) && (
-                    <div className="p-3 rounded-xl bg-[#f8f9fb] border border-[#eef1ff]">
-                      <span className="font-semibold text-[#000066] text-sm">Note: </span>
-                      <span className="text-gray-500 text-sm">{type.note || type.kpi || type.risk}</span>
+                    <div className="rounded-xl border border-[#e8ecf7] bg-white overflow-hidden mb-4">
+                      <div className="h-8 px-3 flex items-center gap-1.5 border-b border-[#eef2ff] bg-[#f8faff]">
+                        <span className="w-2 h-2 rounded-full bg-[#dbe4ff]" />
+                        <span className="w-2 h-2 rounded-full bg-[#dbe4ff]" />
+                        <span className="w-2 h-2 rounded-full bg-[#dbe4ff]" />
+                      </div>
+                      <div className="p-3 space-y-2.5">
+                        <div className="h-2.5 rounded-full bg-[#edf2ff] w-[75%]" />
+                        <div className="h-2.5 rounded-full bg-[#edf2ff] w-[60%]" />
+                        <div className="h-8 rounded-lg" style={{ backgroundColor: `${theme.accent}22` }} />
+                      </div>
                     </div>
-                  )}
 
-                </div>
-              </div>
-                );
-              })()}
-            </motion.div>
-          ))}
+                    <p className="text-sm text-gray-900 mb-2">{type.preview}</p>
+                    <p className="text-xs text-gray-500 mb-3">{type.featureHint}</p>
+                    <p className="text-sm font-semibold" style={{ color: theme.accent }}>{type.priceHint}</p>
+                  </button>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 flex items-center justify-center gap-3">
+            <button
+              onClick={() => goToCard(activeIndex - 1)}
+              className="w-9 h-9 rounded-full border border-[#e4e8f5] bg-white flex items-center justify-center text-[#000066] hover:bg-[#f3f6ff] transition-colors"
+              aria-label="Previous website type"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-2">
+              {websiteTypes.map((type, index) => (
+                <button
+                  key={type.id}
+                  onClick={() => goToCard(index)}
+                  aria-label={`Go to ${type.title}`}
+                  className={`h-1.5 rounded-full transition-all ${index === activeIndex ? 'w-6 bg-[#1a8a6e]' : 'w-2 bg-[#cfd8f6]'}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={() => goToCard(activeIndex + 1)}
+              className="w-9 h-9 rounded-full border border-[#e4e8f5] bg-white flex items-center justify-center text-[#000066] hover:bg-[#f3f6ff] transition-colors"
+              aria-label="Next website type"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
