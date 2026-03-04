@@ -162,7 +162,20 @@ const tintWithAlpha = (hexColor, alpha = 0.12) => {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 };
 
-const activeCardGradient = (hexColor) => `linear-gradient(90deg, ${tintWithAlpha(hexColor, 0.18)} 0%, ${tintWithAlpha(hexColor, 0.06)} 100%)`;
+const activeCardGradient = (hexColor) =>
+  `linear-gradient(135deg, #05060f 0%, #05060f 40%, ${tintWithAlpha(hexColor, 0.2)} 60%, ${tintWithAlpha(hexColor, 0.35)} 80%, ${tintWithAlpha(hexColor, 0.45)} 100%)`;
+
+const educationalActiveGradient =
+  'linear-gradient(180deg, #000000 0%, #000000 34%, #160826 56%, #2b0f4a 72%, #4c1d95 84%, #8b5cf6 93%, #ece4ff 98%, #ffffff 100%)';
+
+const educationalOverlayGradient =
+  'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 55%, rgba(255,255,255,0) 100%)';
+
+const activeCardGlow = (hexColor) =>
+  `0 20px 60px rgba(0,0,0,0.5), 0 0 60px ${tintWithAlpha(hexColor, 0.35)}`;
+
+const activeOverlayGradient = (hexColor) =>
+  `linear-gradient(135deg, #000000 20%, ${tintWithAlpha(hexColor, 0.4)} 80%)`;
 
 export default function WebsiteTypesSection() {
   const scrollRef = useRef(null);
@@ -202,17 +215,32 @@ export default function WebsiteTypesSection() {
   };
 
   return (
-    <section id="website-types" className="py-20 px-6 lg:px-12 bg-[#f8f9fb]">
-      <div className="container mx-auto max-w-7xl">
+    <section
+      id="website-types"
+      className="relative overflow-hidden py-[120px] px-6 lg:px-12"
+      style={{
+        background:
+          'radial-gradient(circle at 50% 0%, rgba(255,184,0,0.08), transparent 40%), radial-gradient(circle at 20% 70%, rgba(255,184,0,0.05), transparent 50%), linear-gradient(180deg, #050b1f 0%, #08122f 60%, #050b1f 100%)',
+      }}
+    >
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2"
+        style={{
+          background: 'radial-gradient(circle, rgba(255,184,0,0.15) 0%, transparent 70%)',
+          filter: 'blur(120px)',
+          zIndex: 0,
+        }}
+      />
+      <div className="relative z-10 container mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#000066] mb-3">Choose the Right Website for Your Business</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />
-          <p className="text-base text-gray-500 max-w-2xl mx-auto">Choose your ideal website format through an interactive carousel. Center cards stay in focus while side cards stay subtle for fast comparison.</p>
+          <h2 className="text-[42px] font-bold text-white tracking-[-0.02em] mb-3">Choose the Right Website for Your Business</h2>
+          <div className="w-20 h-1 bg-[#f5b642] rounded-[4px] mx-auto mb-4" />
+          <p className="text-[17px] text-white/75 max-w-2xl mx-auto">Choose your ideal website format through an interactive carousel. Center cards stay in focus while side cards stay subtle for fast comparison.</p>
         </motion.div>
 
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#f8f9fb] to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#f8f9fb] to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#050b1f] to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#050b1f] to-transparent z-10" />
 
           <div
             ref={scrollRef}
@@ -259,39 +287,61 @@ export default function WebsiteTypesSection() {
                 >
                   <button
                     onClick={() => goToCard(index)}
-                    className={`group w-full text-left h-full p-5 rounded-2xl border border-gray-100 border-l-4 bg-white shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out ${theme.hoverGlowClass}`}
+                    className={`group relative overflow-hidden w-full text-left h-full p-5 rounded-2xl border border-l-4 transition-all duration-[350ms] ease-out ${theme.hoverGlowClass} ${
+                      isCenter ? 'scale-[1.05]' : 'scale-100'
+                    }`}
                     style={{
                       borderLeftColor: theme.accent,
-                      borderRightColor: isCenter ? 'transparent' : undefined,
-                      background: isCenter ? activeCardGradient(theme.accent) : '#ffffff',
+                      borderColor: isCenter ? tintWithAlpha(theme.accent, 0.25) : 'rgba(0,0,0,0.05)',
+                      background: isCenter
+                        ? type.id === 'educational'
+                          ? educationalActiveGradient
+                          : activeCardGradient(theme.accent)
+                        : '#ffffff',
+                      boxShadow: isCenter ? activeCardGlow(theme.accent) : '0 10px 30px rgba(0,0,0,0.15)',
                       transformStyle: 'preserve-3d',
                     }}
                   >
+                    {isCenter && (
+                      <div
+                        className="pointer-events-none absolute w-[140%] h-[120%] -top-[20%] -left-[20%] rounded-[60px] opacity-60"
+                        style={{
+                          background: type.id === 'educational' ? educationalOverlayGradient : activeOverlayGradient(theme.accent),
+                          transform: type.id === 'educational' ? 'rotate(0deg)' : 'rotate(-12deg)',
+                          opacity: type.id === 'educational' ? 0.3 : 0.6,
+                        }}
+                      />
+                    )}
+
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${theme.iconBgClass}`}>
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          isCenter ? 'bg-white/10 border border-white/15' : theme.iconBgClass
+                        }`}
+                      >
                         <type.icon className="w-5 h-5" color={theme.iconColor} strokeWidth={2.3} />
                       </div>
-                      <h3 className="font-semibold text-[#000066] leading-snug">{type.title}</h3>
+                      <h3 className={`font-semibold leading-snug ${isCenter ? 'text-white' : 'text-[#000066]'}`}>{type.title}</h3>
                     </div>
 
                     <div className="space-y-3 text-sm">
                       <div>
-                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Purpose</p>
-                        <p className="text-gray-900 leading-relaxed">{type.purpose}</p>
+                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? 'text-gray-300' : 'text-gray-500'}`}>Purpose</p>
+                        <p className={`${isCenter ? 'text-gray-100' : 'text-gray-900'} leading-relaxed`}>{type.purpose}</p>
                       </div>
 
                       {type.examples && (
                         <div>
-                          <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Examples</p>
-                          <p className="text-gray-900 leading-relaxed">{type.examples}</p>
+                          <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? 'text-gray-300' : 'text-gray-500'}`}>Examples</p>
+                          <p className={`${isCenter ? 'text-gray-100' : 'text-gray-900'} leading-relaxed`}>{type.examples}</p>
                         </div>
                       )}
 
                       <div>
-                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.08em] mb-1">Key Features</p>
+                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? 'text-gray-300' : 'text-gray-500'}`}>Key Features</p>
                         <ul className="space-y-1.5">
                           {type.features.map((feature) => (
-                            <li key={feature} className="flex items-start gap-2 text-gray-900 leading-relaxed">
+                            <li key={feature} className={`flex items-start gap-2 ${isCenter ? 'text-gray-100' : 'text-gray-900'} leading-relaxed`}>
                               <span className="w-1.5 h-1.5 rounded-full mt-2" style={{ backgroundColor: theme.accent }} />
                               <span>{feature}</span>
                             </li>
@@ -303,21 +353,21 @@ export default function WebsiteTypesSection() {
                         <div
                           className="p-3 rounded-xl border space-y-1.5 text-xs sm:text-sm transition-colors duration-300"
                           style={{
-                            backgroundColor: isCenter ? tintWithAlpha(theme.accent, 0.1) : 'transparent',
-                            borderColor: isCenter ? tintWithAlpha(theme.accent, 0.2) : 'transparent',
+                            backgroundColor: isCenter ? tintWithAlpha(theme.accent, 0.12) : 'transparent',
+                            borderColor: isCenter ? tintWithAlpha(theme.accent, 0.24) : 'transparent',
                           }}
                         >
-                          {type.tech && <p><span className="font-semibold text-[#000066]">Typical tech:</span> <span className="text-gray-600">{type.tech}</span></p>}
-                          {type.risk && <p><span className="font-semibold text-[#000066]">Risk:</span> <span className="text-gray-600">{type.risk}</span></p>}
-                          {type.kpi && <p><span className="font-semibold text-[#000066]">KPIs:</span> <span className="text-gray-600">{type.kpi}</span></p>}
-                          {type.complexity && <p><span className="font-semibold text-[#000066]">Complexity:</span> <span className="text-gray-600">{type.complexity}</span></p>}
-                          {type.concerns && <p><span className="font-semibold text-[#000066]">Critical concerns:</span> <span className="text-gray-600">{type.concerns}</span></p>}
-                          {type.successMetric && <p><span className="font-semibold text-[#000066]">Success metric:</span> <span className="text-gray-600">{type.successMetric}</span></p>}
-                          {type.revenue && <p><span className="font-semibold text-[#000066]">Revenue models:</span> <span className="text-gray-600">{type.revenue}</span></p>}
-                          {type.advanced && <p><span className="font-semibold text-[#000066]">Advanced:</span> <span className="text-gray-600">{type.advanced}</span></p>}
-                          {type.challenge && <p><span className="font-semibold text-[#000066]">Biggest challenge:</span> <span className="text-gray-600">{type.challenge}</span></p>}
-                          {type.usage && <p><span className="font-semibold text-[#000066]">Note:</span> <span className="text-gray-600">{type.usage}</span></p>}
-                          {type.architecture && <p><span className="font-semibold text-[#000066]">Architecture:</span> <span className="text-gray-600">{type.architecture}</span></p>}
+                          {type.tech && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Typical tech:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.tech}</span></p>}
+                          {type.risk && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Risk:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.risk}</span></p>}
+                          {type.kpi && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>KPIs:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.kpi}</span></p>}
+                          {type.complexity && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Complexity:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.complexity}</span></p>}
+                          {type.concerns && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Critical concerns:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.concerns}</span></p>}
+                          {type.successMetric && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Success metric:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.successMetric}</span></p>}
+                          {type.revenue && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Revenue models:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.revenue}</span></p>}
+                          {type.advanced && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Advanced:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.advanced}</span></p>}
+                          {type.challenge && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Biggest challenge:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.challenge}</span></p>}
+                          {type.usage && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Note:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.usage}</span></p>}
+                          {type.architecture && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Architecture:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.architecture}</span></p>}
                         </div>
                       )}
                     </div>
