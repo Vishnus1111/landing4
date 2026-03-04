@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import NavbarIT from '@/Components/it-services/NavbarIT';
 import HeroBanner from '@/Components/it-services/HeroBanner';
-import TrustStripIT from '@/Components/it-services/TrustStripIT';
 import ServicesGrid from '@/Components/it-services/ServicesGrid';
 import ProjectEstimator from '@/Components/it-services/ProjectEstimator';
 import WebsiteTypesSection from '@/Components/it-services/WebsiteTypesSection';
@@ -32,13 +31,12 @@ export default function ITServices() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#050816]">
       <NavbarIT />
       <HeroBanner onScrollToEstimator={() => {
         setShowEstimator(true);
         setTimeout(() => estimatorRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       }} onScrollToServices={() => servicesRef.current?.scrollIntoView({ behavior: 'smooth' })} />
-      <TrustStripIT />
       <div ref={servicesRef}>
         <ServicesGrid onWebsiteDevYes={handleWebsiteDevYes} />
       </div>

@@ -40,7 +40,7 @@ export default function ProcessSection() {
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
           <p className="text-sm font-semibold text-[#1a8a6e] tracking-wider uppercase mb-3">Our Process</p>
           <h2 className="text-3xl md:text-4xl font-bold text-[#000066] mb-3">How We Bring Ideas to Life</h2>
-          <div className="w-12 h-1 bg-[#1a8a6e] rounded-full mx-auto mb-4" />
+          <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />
           <p className="text-base text-gray-500 max-w-2xl mx-auto">A proven methodology that delivers exceptional results, on time and on budget.</p>
         </motion.div>
 

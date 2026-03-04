@@ -16,7 +16,6 @@ const cardThemes = {
     iconColor: '#6366F1',
     hoverGlowClass: 'hover:ring-[#6366F1]/25',
     linkClass: 'text-[#6366F1]',
-    cardBackground: 'linear-gradient(135deg, #ffffff, #eef2ff)',
   },
   ecommerce: {
     accent: '#F59E0B',
@@ -38,7 +37,6 @@ const cardThemes = {
     iconColor: '#EAB308',
     hoverGlowClass: 'hover:ring-[#EAB308]/25',
     linkClass: 'text-[#EAB308]',
-    cardBackground: 'linear-gradient(135deg, #ffffff, #fefce8)',
   },
   educational: {
     accent: '#8B5CF6',
@@ -60,7 +58,6 @@ const cardThemes = {
     iconColor: '#F43F5E',
     hoverGlowClass: 'hover:ring-[#F43F5E]/25',
     linkClass: 'text-[#F43F5E]',
-    cardBackground: 'linear-gradient(135deg, #ffffff, #fff1f2)',
   },
   portal: {
     accent: '#1E3A8A',
@@ -156,6 +153,17 @@ const websiteTypes = [
   },
 ];
 
+const tintWithAlpha = (hexColor, alpha = 0.12) => {
+  const normalized = hexColor.replace('#', '');
+  const red = Number.parseInt(normalized.slice(0, 2), 16);
+  const green = Number.parseInt(normalized.slice(2, 4), 16);
+  const blue = Number.parseInt(normalized.slice(4, 6), 16);
+
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+};
+
+const activeCardGradient = (hexColor) => `linear-gradient(90deg, ${tintWithAlpha(hexColor, 0.18)} 0%, ${tintWithAlpha(hexColor, 0.06)} 100%)`;
+
 export default function WebsiteTypesSection() {
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -197,9 +205,8 @@ export default function WebsiteTypesSection() {
     <section id="website-types" className="py-20 px-6 lg:px-12 bg-[#f8f9fb]">
       <div className="container mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <p className="text-sm font-semibold text-[#1a8a6e] tracking-wider uppercase mb-3">Website Types</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#000066] mb-3">What Are You Looking For?</h2>
-          <div className="w-12 h-1 bg-[#eef4f3] rounded-full mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-bold text-[#000066] mb-3">Choose the Right Website for Your Business</h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />
           <p className="text-base text-gray-500 max-w-2xl mx-auto">Choose your ideal website format through an interactive carousel. Center cards stay in focus while side cards stay subtle for fast comparison.</p>
         </motion.div>
 
@@ -252,10 +259,11 @@ export default function WebsiteTypesSection() {
                 >
                   <button
                     onClick={() => goToCard(index)}
-                    className={`group w-full text-left h-full p-5 rounded-2xl border border-gray-100 border-l-4 bg-white shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out ${theme.hoverGlowClass} ${isCenter ? 'ring-2 ring-[#1a8a6e]/20' : ''}`}
+                    className={`group w-full text-left h-full p-5 rounded-2xl border border-gray-100 border-l-4 bg-white shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out ${theme.hoverGlowClass}`}
                     style={{
                       borderLeftColor: theme.accent,
-                      background: theme.cardBackground || '#ffffff',
+                      borderRightColor: isCenter ? 'transparent' : undefined,
+                      background: isCenter ? activeCardGradient(theme.accent) : '#ffffff',
                       transformStyle: 'preserve-3d',
                     }}
                   >
@@ -292,7 +300,13 @@ export default function WebsiteTypesSection() {
                       </div>
 
                       {(type.tech || type.risk || type.kpi || type.complexity || type.concerns || type.successMetric || type.revenue || type.advanced || type.challenge || type.usage || type.architecture) && (
-                        <div className="p-3 rounded-xl bg-[#f8f9fb] border border-[#e9edfb] space-y-1.5 text-xs sm:text-sm">
+                        <div
+                          className="p-3 rounded-xl border space-y-1.5 text-xs sm:text-sm transition-colors duration-300"
+                          style={{
+                            backgroundColor: isCenter ? tintWithAlpha(theme.accent, 0.1) : 'transparent',
+                            borderColor: isCenter ? tintWithAlpha(theme.accent, 0.2) : 'transparent',
+                          }}
+                        >
                           {type.tech && <p><span className="font-semibold text-[#000066]">Typical tech:</span> <span className="text-gray-600">{type.tech}</span></p>}
                           {type.risk && <p><span className="font-semibold text-[#000066]">Risk:</span> <span className="text-gray-600">{type.risk}</span></p>}
                           {type.kpi && <p><span className="font-semibold text-[#000066]">KPIs:</span> <span className="text-gray-600">{type.kpi}</span></p>}

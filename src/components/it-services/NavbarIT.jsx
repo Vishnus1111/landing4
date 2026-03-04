@@ -36,9 +36,9 @@ export default function NavbarIT() {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.6 }}
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b border-gray-100 ${
+                className={`navbar fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
                     isScrolled 
-                        ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-gray-100/50' 
+                        ? 'scrolled bg-[rgba(10,20,60,0.6)] backdrop-blur-xl border-b border-white/10' 
                         : 'bg-transparent'
                 }`}
             >
@@ -51,7 +51,7 @@ export default function NavbarIT() {
                                 alt="Meilleur Analytics Private Limited Logo"
                                 className="w-[38px] h-[38px] rounded-full object-cover border border-[#00B99E]"
                             />
-                            <span className="font-poppins text-[19px] font-bold text-[#000066]">
+                            <span className="font-poppins text-[19px] font-bold text-white">
                                 Meilleur
                             </span>
                             <span className="font-poppins text-[19px] font-light text-[#f0a200]">
@@ -65,10 +65,10 @@ export default function NavbarIT() {
                                 <a
                                     key={index}
                                     href={link.href}
-                                    className="text-gray-600 hover:text-[#000066] font-medium text-sm transition-colors relative group"
+                                    className="text-white/80 hover:text-white font-medium text-sm transition-colors relative group"
                                 >
                                     {link.label}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00B99E] group-hover:w-full transition-all duration-300" />
+                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#e79d1a] group-hover:w-full transition-all duration-300" />
                                 </a>
                             ))}
                         </div>
@@ -77,7 +77,7 @@ export default function NavbarIT() {
                         <div className="hidden lg:block">
                             <Button 
                                 onClick={scrollToServices}
-                                className="bg-[#f6af35] hover:bg-[#e89d2a] text-white px-6 rounded-full"
+                                className="bg-[#e79d1a] hover:bg-[#cf8a13] text-white px-6 rounded-full"
                             >
                                 Get Started
                             </Button>
@@ -86,7 +86,7 @@ export default function NavbarIT() {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="lg:hidden p-2 text-[#000066]"
+                            className="lg:hidden p-2 text-white"
                         >
                             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
@@ -102,7 +102,7 @@ export default function NavbarIT() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-40 lg:hidden pt-20 bg-white"
+                        className="fixed inset-0 z-40 lg:hidden pt-20 bg-[rgba(10,20,60,0.92)] backdrop-blur-xl border-t border-white/10"
                     >
                         <div className="p-6 space-y-4">
                             {navLinks.map((link, index) => (
@@ -110,7 +110,7 @@ export default function NavbarIT() {
                                     key={index}
                                     href={link.href}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="block py-3 text-lg font-medium text-[#000066] border-b border-gray-100"
+                                    className="block py-3 text-lg font-medium text-white border-b border-white/10"
                                 >
                                     {link.label}
                                 </a>
@@ -120,7 +120,7 @@ export default function NavbarIT() {
                                     scrollToServices();
                                     setMobileMenuOpen(false);
                                 }}
-                                className="w-full bg-[#f6af35] hover:bg-[#e89d2a] text-white mt-6 py-6 rounded-full"
+                                className="w-full bg-[#e79d1a] hover:bg-[#cf8a13] text-white mt-6 py-6 rounded-full"
                             >
                                 Get Started
                             </Button>
