@@ -62,15 +62,16 @@ export default function WebsiteDevDetail({ onYes, onNo }) {
       <div className="grid md:grid-cols-2 gap-6 mb-10">
         {sections.map((sec, i) => (
           <motion.div key={sec.heading} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-            className="group bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#e79d1a]/40 transition-all duration-300">
-            <div className="w-11 h-11 rounded-xl bg-[#eef1ff] flex items-center justify-center mb-4 group-hover:bg-[#fff3d6] transition-colors duration-300">
-              <sec.icon className="w-5 h-5 text-[#000066] group-hover:text-[#e79d1a] transition-colors duration-300" />
+            className="group relative overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:bg-white/10 hover:border-[#e79d1a]/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+            <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-[#e79d1a]/25 via-transparent to-[#1a8a6e]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10 w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center mb-4 group-hover:bg-[#e79d1a]/20 transition-colors duration-300">
+              <sec.icon className="w-5 h-5 text-white group-hover:text-[#e79d1a] transition-colors duration-300" />
             </div>
-            <h3 className="font-bold text-[#000066] mb-3">{sec.heading}</h3>
+            <h3 className="relative z-10 font-bold text-white mb-3 group-hover:text-[#e79d1a] transition-colors duration-300">{sec.heading}</h3>
             <ul className="space-y-2">
               {sec.points.map((pt, j) => (
-                <li key={j} className="flex items-start gap-2 text-sm text-gray-500">
-                  <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#1a8a6e] flex-shrink-0" />
+                <li key={j} className="relative z-10 flex items-start gap-2 text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                  <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#9ad0c3] group-hover:bg-[#e79d1a] flex-shrink-0 transition-colors duration-300" />
                   {pt}
                 </li>
               ))}

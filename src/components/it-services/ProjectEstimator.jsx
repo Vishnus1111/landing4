@@ -79,17 +79,23 @@ const steps = [
 function RadioOption({ name, value, selected, onChange, label }) {
   return (
     <label className={cn(
-      "flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all",
-      selected === value ? "border-[#000066] bg-[#eef1ff]/60" : "border-gray-100 hover:border-[#e79d1a]/40 bg-white"
+      "group relative overflow-hidden flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all duration-300 backdrop-blur-xl",
+      selected === value
+        ? "bg-white/10 border-[#e79d1a]/60 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+        : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-[#e79d1a]/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
     )}>
+      <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[#e79d1a]/25 via-transparent to-[#1a8a6e]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <input type="radio" name={name} value={value} checked={selected === value} onChange={() => onChange(value)} className="hidden" />
       <span className={cn(
-        "w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center",
-        selected === value ? "border-[#000066]" : "border-gray-400"
+        "relative z-10 w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors duration-300",
+        selected === value ? "border-[#e79d1a]" : "border-gray-400 group-hover:border-[#e79d1a]"
       )}>
-        {selected === value && <span className="w-2 h-2 rounded-full bg-[#000066]" />}
+        {selected === value && <span className="w-2 h-2 rounded-full bg-[#e79d1a]" />}
       </span>
-      <span className="text-sm text-gray-700 font-medium">{label}</span>
+      <span className={cn(
+        "relative z-10 text-sm font-medium transition-colors duration-300",
+        selected === value ? "text-[#e79d1a]" : "text-gray-200 group-hover:text-[#e79d1a]"
+      )}>{label}</span>
     </label>
   );
 }
@@ -146,7 +152,7 @@ export default function ProjectEstimator({ estimatorRef }) {
   };
 
   return (
-    <section ref={estimatorRef} className="py-20 px-6 lg:px-12 bg-white">
+    <section ref={estimatorRef} className="py-20 px-6 lg:px-12 bg-[#050816] border-t border-gray-700">
       <div className="container mx-auto max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
           <p className="text-sm font-semibold text-[#1a8a6e] tracking-wider uppercase mb-3 block">Project Estimator</p>
@@ -198,24 +204,30 @@ export default function ProjectEstimator({ estimatorRef }) {
                   <div className="space-y-3">
                     {websiteTypes.map(type => (
                       <button key={type.id} onClick={() => handleWebsiteTypeSelect(type.id)}
-                        className={cn("w-full p-4 rounded-xl border-2 text-left transition-all",
-                          sel.websiteType === type.id ? "border-[#000066] bg-[#eef1ff]/60" : "border-gray-100 hover:border-[#e79d1a]/40 bg-white"
+                        className={cn("group relative overflow-hidden w-full p-4 rounded-xl border text-left transition-all duration-300 backdrop-blur-xl",
+                          sel.websiteType === type.id
+                            ? "bg-white/10 border-[#e79d1a]/60 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+                            : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-[#e79d1a]/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
                         )}>
+                        <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[#e79d1a]/25 via-transparent to-[#1a8a6e]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-slate-900">{type.label}</h4>
-                            <p className="text-sm text-slate-500 mt-0.5">{type.description}</p>
+                          <div className="relative z-10 flex-1">
+                            <h4 className={cn(
+                              "font-semibold transition-colors duration-300",
+                              sel.websiteType === type.id ? "text-[#e79d1a]" : "text-white group-hover:text-[#e79d1a]"
+                            )}>{type.label}</h4>
+                            <p className="text-sm text-gray-300 mt-0.5">{type.description}</p>
                             {sel.websiteType === type.id && (
-                              <div className="mt-3 pt-3 border-t border-teal-200">
-                                <p className="text-xs font-medium text-teal-700 mb-1">Examples: {type.examples}</p>
+                              <div className="mt-3 pt-3 border-t border-white/20">
+                                <p className="text-xs font-medium text-[#9ad0c3] mb-1">Examples: {type.examples}</p>
                                 <div className="flex flex-wrap gap-1 mt-1">
-                                  {type.features.map(f => <span key={f} className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">{f}</span>)}
+                                  {type.features.map(f => <span key={f} className="text-xs bg-white/10 text-gray-200 px-2 py-0.5 rounded-full border border-white/15">{f}</span>)}
                                 </div>
                               </div>
                             )}
                           </div>
-                          <div className={cn("w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1",
-                            sel.websiteType === type.id ? "border-[#000066] bg-[#000066]" : "border-gray-300"
+                          <div className={cn("relative z-10 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1 transition-colors duration-300",
+                            sel.websiteType === type.id ? "border-[#e79d1a] bg-[#e79d1a]" : "border-gray-300 group-hover:border-[#e79d1a]"
                           )}>
                             {sel.websiteType === type.id && <Check className="w-3 h-3 text-white" />}
                           </div>
@@ -234,35 +246,41 @@ export default function ProjectEstimator({ estimatorRef }) {
                   <div className="space-y-4">
                     {designApproaches.map(approach => (
                       <button key={approach.id} onClick={() => handleDesignApproachSelect(approach.id)}
-                        className={cn("w-full p-5 rounded-xl border-2 text-left transition-all relative",
-                          sel.designApproach === approach.id ? "border-[#000066] bg-[#eef1ff]/60" : "border-gray-100 hover:border-[#e79d1a]/40 bg-white",
+                        className={cn("group relative overflow-hidden w-full p-5 rounded-xl border text-left transition-all duration-300 backdrop-blur-xl",
+                          sel.designApproach === approach.id
+                            ? "bg-white/10 border-[#e79d1a]/60 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+                            : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-[#e79d1a]/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]",
                           approach.id === 'semi' && "ring-1 ring-[#1a8a6e]/30"
                         )}>
+                        <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[#e79d1a]/25 via-transparent to-[#1a8a6e]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         {approach.id === 'semi' && (
                           <span className="absolute -top-3 left-4 px-2 py-0.5 bg-[#e79d1a] text-white text-xs font-semibold rounded-full">Recommended</span>
                         )}
                         <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-slate-900">{approach.name}</h4>
-                            <p className="text-sm text-teal-600 font-medium">{approach.subtitle}</p>
+                          <div className="relative z-10 flex-1">
+                            <h4 className={cn(
+                              "font-semibold transition-colors duration-300",
+                              sel.designApproach === approach.id ? "text-[#e79d1a]" : "text-white group-hover:text-[#e79d1a]"
+                            )}>{approach.name}</h4>
+                            <p className="text-sm text-[#9ad0c3] font-medium">{approach.subtitle}</p>
                             {sel.designApproach === approach.id && (
-                              <div className="mt-3 pt-3 border-t border-teal-200 grid grid-cols-2 gap-3">
+                              <div className="mt-3 pt-3 border-t border-white/20 grid grid-cols-2 gap-3">
                                 <div>
-                                  <p className="text-xs font-semibold text-slate-700 mb-1">Pros</p>
-                                  {approach.pros.map(p => <p key={p} className="text-xs text-slate-600">✓ {p}</p>)}
+                                  <p className="text-xs font-semibold text-[#9ad0c3] mb-1">Pros</p>
+                                  {approach.pros.map(p => <p key={p} className="text-xs text-gray-200">✓ {p}</p>)}
                                 </div>
                                 <div>
-                                  <p className="text-xs font-semibold text-slate-700 mb-1">Cons</p>
-                                  {approach.cons.map(c => <p key={c} className="text-xs text-slate-500">– {c}</p>)}
+                                  <p className="text-xs font-semibold text-[#9ad0c3] mb-1">Cons</p>
+                                  {approach.cons.map(c => <p key={c} className="text-xs text-gray-300">– {c}</p>)}
                                 </div>
                                 <div className="col-span-2">
-                                  <p className="text-xs italic text-slate-600 border-l-2 border-teal-400 pl-2">"{approach.verdict}"</p>
+                                  <p className="text-xs italic text-gray-200 border-l-2 border-[#e79d1a] pl-2">"{approach.verdict}"</p>
                                 </div>
                               </div>
                             )}
                           </div>
-                          <div className={cn("w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1",
-                            sel.designApproach === approach.id ? "border-[#000066] bg-[#000066]" : "border-gray-300"
+                          <div className={cn("relative z-10 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1 transition-colors duration-300",
+                            sel.designApproach === approach.id ? "border-[#e79d1a] bg-[#e79d1a]" : "border-gray-300 group-hover:border-[#e79d1a]"
                           )}>
                             {sel.designApproach === approach.id && <Check className="w-3 h-3 text-white" />}
                           </div>

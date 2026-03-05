@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Building2, ShoppingCart, GraduationCap, LayoutDashboard, BookOpen, Users, MousePointerClick, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -162,8 +162,19 @@ const tintWithAlpha = (hexColor, alpha = 0.12) => {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 };
 
+const clampChannel = (value) => Math.max(0, Math.min(255, value));
+
+const adjustHexColor = (hexColor, delta) => {
+  const normalized = hexColor.replace('#', '');
+  const red = clampChannel(Number.parseInt(normalized.slice(0, 2), 16) + delta);
+  const green = clampChannel(Number.parseInt(normalized.slice(2, 4), 16) + delta);
+  const blue = clampChannel(Number.parseInt(normalized.slice(4, 6), 16) + delta);
+
+  return `#${[red, green, blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+};
+
 const activeCardGradient = (hexColor) =>
-  `linear-gradient(135deg, #05060f 0%, #05060f 40%, ${tintWithAlpha(hexColor, 0.2)} 60%, ${tintWithAlpha(hexColor, 0.35)} 80%, ${tintWithAlpha(hexColor, 0.45)} 100%)`;
+  `linear-gradient(180deg, #000000 0%, #000000 34%, ${adjustHexColor(hexColor, -110)} 56%, ${adjustHexColor(hexColor, -68)} 70%, ${adjustHexColor(hexColor, -28)} 82%, ${adjustHexColor(hexColor, 18)} calc(100% - 30px), #ffffff calc(100% - 20px), #ffffff 100%)`;
 
 const educationalActiveGradient =
   'linear-gradient(180deg, #000000 0%, #000000 34%, #160826 56%, #2b0f4a 72%, #4c1d95 84%, #8b5cf6 93%, #ece4ff 98%, #ffffff 100%)';
@@ -179,12 +190,26 @@ const activeOverlayGradient = (hexColor) =>
 
 export default function WebsiteTypesSection() {
   const scrollRef = useRef(null);
+  const scrollEndTimerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const centerCard = (index, behavior = 'smooth') => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const card = container.querySelector(`[data-index="${index}"]`);
+    if (!card) return;
+
+    const targetLeft = card.offsetLeft + card.offsetWidth / 2 - container.clientWidth / 2;
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const clampedLeft = Math.max(0, Math.min(targetLeft, maxScrollLeft));
+
+    container.scrollTo({ left: clampedLeft, behavior });
+  };
 
   const goToCard = (index) => {
     const clamped = Math.max(0, Math.min(index, websiteTypes.length - 1));
-    const card = scrollRef.current?.querySelector(`[data-index="${clamped}"]`);
-    card?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    centerCard(clamped, 'smooth');
     setActiveIndex(clamped);
   };
 
@@ -212,7 +237,30 @@ export default function WebsiteTypesSection() {
     if (nearestIndex !== activeIndex) {
       setActiveIndex(nearestIndex);
     }
+
+    if (scrollEndTimerRef.current) {
+      clearTimeout(scrollEndTimerRef.current);
+    }
+
+    scrollEndTimerRef.current = setTimeout(() => {
+      centerCard(nearestIndex, 'smooth');
+    }, 90);
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      centerCard(activeIndex, 'auto');
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (scrollEndTimerRef.current) {
+        clearTimeout(scrollEndTimerRef.current);
+      }
+    };
+  }, [activeIndex]);
 
   return (
     <section
@@ -250,9 +298,11 @@ export default function WebsiteTypesSection() {
           >
             {websiteTypes.map((type, index) => {
               const theme = cardThemes[type.id];
+              const isEducational = type.id === 'educational';
               const offset = index - activeIndex;
               const distance = Math.abs(offset);
               const isCenter = distance === 0;
+              const isActiveNonEducational = isCenter && !isEducational;
               const isLeft = offset < 0;
 
               const rotateY = isCenter ? 0 : isLeft ? Math.min(20 + (distance - 1) * 6, 30) : -Math.min(20 + (distance - 1) * 6, 30);
@@ -277,7 +327,7 @@ export default function WebsiteTypesSection() {
                     z: depth,
                     rotateY,
                   }}
-                  className="snap-center shrink-0 w-[82%] sm:w-[56%] lg:w-[34%] xl:w-[24%]"
+                  className="snap-center snap-always shrink-0 w-[82%] sm:w-[56%] lg:w-[34%] xl:w-[24%]"
                   style={{
                     transformStyle: 'preserve-3d',
                     zIndex: Math.max(1, 20 - distance),
@@ -306,9 +356,19 @@ export default function WebsiteTypesSection() {
                       <div
                         className="pointer-events-none absolute w-[140%] h-[120%] -top-[20%] -left-[20%] rounded-[60px] opacity-60"
                         style={{
-                          background: type.id === 'educational' ? educationalOverlayGradient : activeOverlayGradient(theme.accent),
-                          transform: type.id === 'educational' ? 'rotate(0deg)' : 'rotate(-12deg)',
-                          opacity: type.id === 'educational' ? 0.3 : 0.6,
+                          background: isEducational ? educationalOverlayGradient : activeOverlayGradient(theme.accent),
+                          transform: isEducational ? 'rotate(0deg)' : 'rotate(-12deg)',
+                          opacity: isEducational ? 0.3 : 0.36,
+                        }}
+                      />
+                    )}
+
+                    {isCenter && type.id !== 'educational' && (
+                      <div
+                        className="pointer-events-none absolute inset-x-0 bottom-0 h-[36px]"
+                        style={{
+                          background:
+                            'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 42%, #ffffff 65%, #ffffff 100%)',
                         }}
                       />
                     )}
@@ -319,30 +379,30 @@ export default function WebsiteTypesSection() {
                           isCenter ? 'bg-white/10 border border-white/15' : theme.iconBgClass
                         }`}
                       >
-                        <type.icon className="w-5 h-5" color={theme.iconColor} strokeWidth={2.3} />
+                        <type.icon className="w-5 h-5" color={isActiveNonEducational ? adjustHexColor(theme.accent, 42) : theme.iconColor} strokeWidth={2.3} />
                       </div>
-                      <h3 className={`font-semibold leading-snug ${isCenter ? 'text-white' : 'text-[#000066]'}`}>{type.title}</h3>
+                      <h3 className={`font-semibold leading-snug ${isCenter ? (isActiveNonEducational ? 'text-white' : 'text-white') : 'text-[#000066]'}`}>{type.title}</h3>
                     </div>
 
                     <div className="space-y-3 text-sm">
                       <div>
-                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? 'text-gray-300' : 'text-gray-500'}`}>Purpose</p>
-                        <p className={`${isCenter ? 'text-gray-100' : 'text-gray-900'} leading-relaxed`}>{type.purpose}</p>
+                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-300') : 'text-gray-500'}`}>Purpose</p>
+                        <p className={`${isCenter ? (isActiveNonEducational ? 'text-white' : 'text-gray-100') : 'text-gray-900'} leading-relaxed`}>{type.purpose}</p>
                       </div>
 
                       {type.examples && (
                         <div>
-                          <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? 'text-gray-300' : 'text-gray-500'}`}>Examples</p>
-                          <p className={`${isCenter ? 'text-gray-100' : 'text-gray-900'} leading-relaxed`}>{type.examples}</p>
+                          <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-300') : 'text-gray-500'}`}>Examples</p>
+                          <p className={`${isCenter ? (isActiveNonEducational ? 'text-white' : 'text-gray-100') : 'text-gray-900'} leading-relaxed`}>{type.examples}</p>
                         </div>
                       )}
 
                       <div>
-                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? 'text-gray-300' : 'text-gray-500'}`}>Key Features</p>
+                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-300') : 'text-gray-500'}`}>Key Features</p>
                         <ul className="space-y-1.5">
                           {type.features.map((feature) => (
-                            <li key={feature} className={`flex items-start gap-2 ${isCenter ? 'text-gray-100' : 'text-gray-900'} leading-relaxed`}>
-                              <span className="w-1.5 h-1.5 rounded-full mt-2" style={{ backgroundColor: theme.accent }} />
+                            <li key={feature} className={`flex items-start gap-2 ${isCenter ? (isActiveNonEducational ? 'text-white' : 'text-gray-100') : 'text-gray-900'} leading-relaxed`}>
+                              <span className="w-1.5 h-1.5 rounded-full mt-2" style={{ backgroundColor: isActiveNonEducational ? adjustHexColor(theme.accent, 42) : theme.accent }} />
                               <span>{feature}</span>
                             </li>
                           ))}
@@ -357,17 +417,17 @@ export default function WebsiteTypesSection() {
                             borderColor: isCenter ? tintWithAlpha(theme.accent, 0.24) : 'transparent',
                           }}
                         >
-                          {type.tech && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Typical tech:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.tech}</span></p>}
-                          {type.risk && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Risk:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.risk}</span></p>}
-                          {type.kpi && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>KPIs:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.kpi}</span></p>}
-                          {type.complexity && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Complexity:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.complexity}</span></p>}
-                          {type.concerns && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Critical concerns:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.concerns}</span></p>}
-                          {type.successMetric && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Success metric:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.successMetric}</span></p>}
-                          {type.revenue && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Revenue models:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.revenue}</span></p>}
-                          {type.advanced && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Advanced:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.advanced}</span></p>}
-                          {type.challenge && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Biggest challenge:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.challenge}</span></p>}
-                          {type.usage && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Note:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.usage}</span></p>}
-                          {type.architecture && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Architecture:</span> <span className={isCenter ? 'text-gray-200' : 'text-gray-600'}>{type.architecture}</span></p>}
+                          {type.tech && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Typical tech:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.tech}</span></p>}
+                          {type.risk && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Risk:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.risk}</span></p>}
+                          {type.kpi && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>KPIs:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.kpi}</span></p>}
+                          {type.complexity && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Complexity:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.complexity}</span></p>}
+                          {type.concerns && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Critical concerns:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.concerns}</span></p>}
+                          {type.successMetric && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Success metric:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.successMetric}</span></p>}
+                          {type.revenue && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Revenue models:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.revenue}</span></p>}
+                          {type.advanced && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Advanced:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.advanced}</span></p>}
+                          {type.challenge && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Biggest challenge:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.challenge}</span></p>}
+                          {type.usage && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Note:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.usage}</span></p>}
+                          {type.architecture && <p><span className={isCenter ? 'font-semibold text-white' : 'font-semibold text-[#000066]'}>Architecture:</span> <span className={isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-200') : 'text-gray-600'}>{type.architecture}</span></p>}
                         </div>
                       )}
                     </div>
