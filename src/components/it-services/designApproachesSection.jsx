@@ -80,8 +80,15 @@ export default function DesignApproachesSection() {
                 </div>
               )}
 
-              <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-5 border", a.featured ? "bg-[#e79d1a]/15 border-[#e79d1a]/40" : "bg-white/10 border-white/10")}>
-                <a.icon className={cn("w-6 h-6", a.featured ? "text-[#f6c264]" : "text-white")} />
+              <div className={cn(
+                "w-12 h-12 rounded-xl flex items-center justify-center mb-5 border",
+                a.featured
+                  ? "bg-[#e79d1a]/15 border-[#e79d1a]/40"
+                  : a.id === 'fully-custom'
+                    ? "bg-[#7df5ba]/15 border-[#7df5ba]/45 shadow-[0_0_16px_rgba(125,245,186,0.18)]"
+                    : "bg-white/10 border-white/10"
+              )}>
+                <a.icon className={cn("w-6 h-6", a.featured ? "text-[#f6c264]" : a.id === 'fully-custom' ? 'text-[#7df5ba]' : 'text-white')} />
               </div>
 
               <h3 className="text-lg font-bold text-white mb-1">{a.title}</h3>
@@ -113,7 +120,18 @@ export default function DesignApproachesSection() {
                 </div>
               </div>
 
-              <div className={cn("p-3.5 rounded-xl mb-6 text-sm italic", a.featured ? "bg-[#e79d1a]/12 text-[#ffe1aa]" : "bg-white/5 text-gray-300")}>
+              <div
+                className={cn(
+                  "p-3.5 rounded-xl mb-6 text-sm italic",
+                  a.featured
+                    ? "bg-[#e79d1a]/12 text-[#ffe1aa]"
+                    : a.id === 'template'
+                      ? "bg-transparent text-gray-300"
+                    : a.id === 'fully-custom'
+                      ? "bg-[#7df5ba]/12 text-[#c9ffe3]"
+                      : "bg-white/5 text-gray-300"
+                )}
+              >
                 "{a.verdict}"
               </div>
 

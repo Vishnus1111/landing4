@@ -1,10 +1,20 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import itHeroVideo from '../../../asset/itherovideo.mp4';
 
 export default function HeroBanner({ onScrollToEstimator, onScrollToServices }) {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 70]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.65, 1], [1, 0.85, 0.6]);
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+
   const heroCards = [
     {
       title: 'Dashboard UI',
@@ -33,18 +43,19 @@ export default function HeroBanner({ onScrollToEstimator, onScrollToServices }) 
   ];
 
   return (
-    <section className="relative min-h-screen overflow-hidden pt-32 pb-0 lg:pt-40 px-6 lg:px-8 ">
-      <video
+    <section ref={sectionRef} className="relative h-screen overflow-hidden pt-32 pb-0 lg:pt-40 px-6 lg:px-8 ">
+      <motion.video
         className="absolute inset-0 h-full w-full object-cover"
         autoPlay
         muted
         loop
         playsInline
+        style={{ scale: videoScale }}
       >
         <source src={itHeroVideo} type="video/mp4" />
-      </video>
+      </motion.video>
 
-      <div className="relative max-w-7xl mx-auto">
+      <motion.div className="relative max-w-7xl mx-auto" style={{ y: contentY, opacity: contentOpacity }}>
         <div className="grid lg:grid-cols-2 gap-14 xl:gap-20 items-center">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -119,7 +130,7 @@ export default function HeroBanner({ onScrollToEstimator, onScrollToServices }) 
             ))}
           </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

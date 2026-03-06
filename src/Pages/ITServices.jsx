@@ -33,12 +33,16 @@ export default function ITServices() {
   return (
     <div className="min-h-screen bg-[#050816]">
       <NavbarIT />
-      <HeroBanner onScrollToEstimator={() => {
-        setShowEstimator(true);
-        setTimeout(() => estimatorRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-      }} onScrollToServices={() => servicesRef.current?.scrollIntoView({ behavior: 'smooth' })} />
-      <div ref={servicesRef}>
-        <ServicesGrid onWebsiteDevYes={handleWebsiteDevYes} />
+      <div className="relative">
+        <div className="sticky top-0 h-screen z-0 overflow-hidden">
+          <HeroBanner onScrollToEstimator={() => {
+            setShowEstimator(true);
+            setTimeout(() => estimatorRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+          }} onScrollToServices={() => servicesRef.current?.scrollIntoView({ behavior: 'smooth' })} />
+        </div>
+        <div ref={servicesRef} className="relative z-20 -mt-16">
+          <ServicesGrid onWebsiteDevYes={handleWebsiteDevYes} />
+        </div>
       </div>
 
       <AnimatePresence>

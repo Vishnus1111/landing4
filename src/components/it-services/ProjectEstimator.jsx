@@ -177,14 +177,20 @@ function WebsiteTypeGlowCard({ type, selected, onSelect, gridPointer }) {
             selected ? 'text-[#e79d1a]' : 'text-white'
           )}>{type.label}</h4>
           <p className="text-sm text-gray-300 mt-0.5">{type.description}</p>
-          {selected && (
+          <div
+            className={cn(
+              'overflow-hidden transition-all duration-300 max-h-0 opacity-0',
+              'group-hover:max-h-40 group-hover:opacity-100',
+              'group-focus-visible:max-h-40 group-focus-visible:opacity-100'
+            )}
+          >
             <div className="mt-3 pt-3 border-t border-white/20">
               <p className="text-xs font-medium text-[#9ad0c3] mb-1">Examples: {type.examples}</p>
               <div className="flex flex-wrap gap-1 mt-1">
                 {type.features.map(feature => <span key={feature} className="text-xs bg-white/10 text-gray-200 px-2 py-0.5 rounded-full border border-white/15">{feature}</span>)}
               </div>
             </div>
-          )}
+          </div>
         </div>
         <div className={cn(
           'relative z-10 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1 transition-colors duration-300',
@@ -312,14 +318,21 @@ export default function ProjectEstimator({ estimatorRef }) {
                     onMouseEnter={handleWebsiteTypePointerMove}
                     onMouseLeave={handleWebsiteTypePointerLeave}
                   >
-                    {websiteTypes.map(type => (
-                      <WebsiteTypeGlowCard
+                    {websiteTypes.map((type, index) => (
+                      <motion.div
                         key={type.id}
-                        type={type}
-                        selected={sel.websiteType === type.id}
-                        onSelect={handleWebsiteTypeSelect}
-                        gridPointer={websiteTypePointer}
-                      />
+                        initial={{ opacity: 0, y: 18 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.4, ease: 'easeOut', delay: index * 0.06 }}
+                      >
+                        <WebsiteTypeGlowCard
+                          type={type}
+                          selected={sel.websiteType === type.id}
+                          onSelect={handleWebsiteTypeSelect}
+                          gridPointer={websiteTypePointer}
+                        />
+                      </motion.div>
                     ))}
                   </div>
                 </motion.div>
@@ -328,12 +341,13 @@ export default function ProjectEstimator({ estimatorRef }) {
               {/* STEP 2: Design Approach */}
               {currentStep === 2 && (
                 <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">How do you want to build it?</h3>
+                  <h3 className="text-xl font-semibold text-white mb-2">How do you want to build it?</h3>
                   <p className="text-sm text-slate-500 mb-6">The design approach impacts cost, timeline, and scalability.</p>
                   <div className="space-y-4">
                     {designApproaches.map(approach => (
                       <button key={approach.id} onClick={() => handleDesignApproachSelect(approach.id)}
-                        className={cn("group relative overflow-hidden w-full p-5 rounded-xl border text-left transition-all duration-300 backdrop-blur-xl",
+                        className={cn("group relative w-full p-5 rounded-xl border text-left transition-all duration-300 backdrop-blur-xl",
+                          approach.id === 'semi' ? 'overflow-visible' : 'overflow-hidden',
                           sel.designApproach === approach.id
                             ? "bg-white/10 border-[#e79d1a]/60 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
                             : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-[#e79d1a]/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]",
@@ -341,7 +355,7 @@ export default function ProjectEstimator({ estimatorRef }) {
                         )}>
                         <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[#e79d1a]/25 via-transparent to-[#1a8a6e]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         {approach.id === 'semi' && (
-                          <span className="absolute -top-3 left-4 px-2 py-0.5 bg-[#e79d1a] text-white text-xs font-semibold rounded-full">Recommended</span>
+                          <span className="absolute top-0 left-4 -translate-y-1/2 z-20 px-2 py-0.5 bg-[#e79d1a] text-white text-xs font-semibold rounded-full border border-[#f6c36a]">Recommended</span>
                         )}
                         <div className="flex items-start justify-between gap-4">
                           <div className="relative z-10 flex-1">
@@ -367,9 +381,17 @@ export default function ProjectEstimator({ estimatorRef }) {
                             )}
                           </div>
                           <div className={cn("relative z-10 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1 transition-colors duration-300",
-                            sel.designApproach === approach.id ? "border-[#e79d1a] bg-[#e79d1a]" : "border-gray-300 group-hover:border-[#e79d1a]"
+                            sel.designApproach === approach.id
+                              ? approach.id === 'full'
+                                ? "border-[#7df5ba] bg-[#7df5ba]"
+                                : "border-[#e79d1a] bg-[#e79d1a]"
+                              : approach.id === 'full'
+                                ? "border-gray-300 group-hover:border-[#7df5ba]"
+                                : "border-gray-300 group-hover:border-[#e79d1a]"
                           )}>
-                            {sel.designApproach === approach.id && <Check className="w-3 h-3 text-white" />}
+                            {sel.designApproach === approach.id && (
+                              <Check className={cn("w-3 h-3", approach.id === 'full' ? 'text-[#05351f]' : 'text-white')} />
+                            )}
                           </div>
                         </div>
                       </button>
