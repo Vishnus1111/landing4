@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/Components/ui/button';
 import { Textarea } from '@/Components/ui/textarea';
@@ -100,12 +100,110 @@ function RadioOption({ name, value, selected, onChange, label }) {
   );
 }
 
+function WebsiteTypeGlowCard({ type, selected, onSelect, gridPointer }) {
+  const cardRef = useRef(null);
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, active: false, inside: false, proximity: 0 });
+
+  useEffect(() => {
+    if (!cardRef.current || !gridPointer.active) {
+      setSpotlight((prev) => ({ ...prev, active: false, inside: false, proximity: 0 }));
+      return;
+    }
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = gridPointer.x - rect.left;
+    const y = gridPointer.y - rect.top;
+    const inside = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
+
+    const outsideX = Math.max(0, -x, x - rect.width);
+    const outsideY = Math.max(0, -y, y - rect.height);
+    const edgeDistance = Math.hypot(outsideX, outsideY);
+    const borderInfluenceRadius = 120;
+    const active = inside || edgeDistance <= borderInfluenceRadius;
+    const proximity = inside ? 1 : Math.max(0, 1 - edgeDistance / borderInfluenceRadius);
+
+    setSpotlight({ x, y, active, inside, proximity });
+  }, [gridPointer]);
+
+  return (
+    <button
+      ref={cardRef}
+      onClick={() => onSelect(type.id)}
+      className="group relative overflow-hidden w-full p-4 rounded-xl border text-left transition-all duration-300 backdrop-blur-xl bg-white/5"
+      style={{
+        borderColor: selected
+          ? '#e79d1a'
+          : spotlight.inside
+            ? 'rgba(251,191,36,0.3)'
+            : 'rgba(255,255,255,0.1)',
+        boxShadow: selected
+          ? '0 0 0 1px rgba(231,157,26,0.22), 0 0 14px rgba(231,157,26,0.22), 0 12px 28px rgba(0,0,0,0.45)'
+          : spotlight.inside
+            ? '0 0 0 1px rgba(251,191,36,0.14), 0 0 10px rgba(251,191,36,0.21), 0 0 28px rgba(245,158,11,0.17), 0 0 62px rgba(245,158,11,0.1), 0 12px 30px rgba(0,0,0,0.45)'
+            : '0 10px 28px rgba(0,0,0,0.38)',
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-300"
+        style={{
+          opacity: spotlight.inside ? 1 : 0,
+          padding: '1px',
+          background:
+            'linear-gradient(135deg, rgba(252,211,77,0.35) 0%, rgba(251,191,36,0.3) 38%, rgba(245,158,11,0.23) 62%, rgba(252,211,77,0.34) 100%)',
+          WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+          filter: 'drop-shadow(0 0 6px rgba(251,191,36,0.22)) drop-shadow(0 0 16px rgba(245,158,11,0.16))',
+        }}
+      />
+
+      <div
+        className="pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-300"
+        style={{
+          opacity: spotlight.active && !spotlight.inside ? Math.max(0.2, spotlight.proximity) : 0,
+          padding: '1px',
+          background: `radial-gradient(190px circle at ${spotlight.x}px ${spotlight.y}px, rgba(252,211,77,1) 0%, rgba(251,191,36,0.9) 20%, rgba(245,158,11,0.52) 42%, rgba(245,158,11,0.2) 58%, transparent 76%)`,
+          WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+          filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.62)) drop-shadow(0 0 18px rgba(245,158,11,0.5))',
+        }}
+      />
+
+      <div className="relative z-10 flex items-start justify-between gap-4">
+        <div className="relative z-10 flex-1">
+          <h4 className={cn(
+            'font-semibold transition-colors duration-300',
+            selected ? 'text-[#e79d1a]' : 'text-white'
+          )}>{type.label}</h4>
+          <p className="text-sm text-gray-300 mt-0.5">{type.description}</p>
+          {selected && (
+            <div className="mt-3 pt-3 border-t border-white/20">
+              <p className="text-xs font-medium text-[#9ad0c3] mb-1">Examples: {type.examples}</p>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {type.features.map(feature => <span key={feature} className="text-xs bg-white/10 text-gray-200 px-2 py-0.5 rounded-full border border-white/15">{feature}</span>)}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className={cn(
+          'relative z-10 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1 transition-colors duration-300',
+          selected ? 'border-[#e79d1a] bg-[#e79d1a]' : 'border-gray-300'
+        )}>
+          {selected && <Check className="w-3 h-3 text-white" />}
+        </div>
+      </div>
+    </button>
+  );
+}
+
 export default function ProjectEstimator({ estimatorRef }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [sel, setSel] = useState({ websiteType: null, designApproach: null });
   const [bizQ, setBizQ] = useState({ q1: null, q2: null, q2detail: '', q3: null });
   const [estimate, setEstimate] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [websiteTypePointer, setWebsiteTypePointer] = useState({ x: 0, y: 0, active: false });
   const orgSizeLabels = {
     big: 'Big Organization',
     medium: 'Medium Organization',
@@ -151,13 +249,20 @@ export default function ProjectEstimator({ estimatorRef }) {
     setCurrentStep(3);
   };
 
+  const handleWebsiteTypePointerMove = (event) => {
+    setWebsiteTypePointer({ x: event.clientX, y: event.clientY, active: true });
+  };
+
+  const handleWebsiteTypePointerLeave = () => {
+    setWebsiteTypePointer((prev) => ({ ...prev, active: false }));
+  };
+
   return (
-    <section ref={estimatorRef} className="py-20 px-6 lg:px-12 bg-[#050816] border-t border-gray-700">
+    <section ref={estimatorRef} className="py-20 px-6 lg:px-12 bg-[#000000] border-t border-gray-700">
       <div className="container mx-auto max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <p className="text-sm font-semibold text-[#1a8a6e] tracking-wider uppercase mb-3 block">Project Estimator</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#000066] mb-3">Calculate Your Website Cost</h2>
-          <div className="w-12 h-1 bg-[#1a8a6e] rounded-full mx-auto mb-4" />
+          <h2 className="text-4xl font-bold text-white mb-3">Website Cost Estimator</h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />
           <p className="text-base text-gray-500 max-w-2xl mx-auto">Based on real Indian market pricing. Select your options to get an instant estimate.</p>
         </motion.div>
 
@@ -199,40 +304,22 @@ export default function ProjectEstimator({ estimatorRef }) {
               {/* STEP 1: Website Type */}
               {currentStep === 1 && (
                 <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">What type of website do you need?</h3>
+                  <h3 className="text-xl font-semibold text-white mb-2">What type of website do you need?</h3>
                   <p className="text-sm text-slate-500 mb-6">Each type has different complexity, cost, and purpose.</p>
-                  <div className="space-y-3">
+                  <div
+                    className="space-y-3"
+                    onMouseMove={handleWebsiteTypePointerMove}
+                    onMouseEnter={handleWebsiteTypePointerMove}
+                    onMouseLeave={handleWebsiteTypePointerLeave}
+                  >
                     {websiteTypes.map(type => (
-                      <button key={type.id} onClick={() => handleWebsiteTypeSelect(type.id)}
-                        className={cn("group relative overflow-hidden w-full p-4 rounded-xl border text-left transition-all duration-300 backdrop-blur-xl",
-                          sel.websiteType === type.id
-                            ? "bg-white/10 border-[#e79d1a]/60 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
-                            : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-[#e79d1a]/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
-                        )}>
-                        <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[#e79d1a]/25 via-transparent to-[#1a8a6e]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="relative z-10 flex-1">
-                            <h4 className={cn(
-                              "font-semibold transition-colors duration-300",
-                              sel.websiteType === type.id ? "text-[#e79d1a]" : "text-white group-hover:text-[#e79d1a]"
-                            )}>{type.label}</h4>
-                            <p className="text-sm text-gray-300 mt-0.5">{type.description}</p>
-                            {sel.websiteType === type.id && (
-                              <div className="mt-3 pt-3 border-t border-white/20">
-                                <p className="text-xs font-medium text-[#9ad0c3] mb-1">Examples: {type.examples}</p>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  {type.features.map(f => <span key={f} className="text-xs bg-white/10 text-gray-200 px-2 py-0.5 rounded-full border border-white/15">{f}</span>)}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                          <div className={cn("relative z-10 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-1 transition-colors duration-300",
-                            sel.websiteType === type.id ? "border-[#e79d1a] bg-[#e79d1a]" : "border-gray-300 group-hover:border-[#e79d1a]"
-                          )}>
-                            {sel.websiteType === type.id && <Check className="w-3 h-3 text-white" />}
-                          </div>
-                        </div>
-                      </button>
+                      <WebsiteTypeGlowCard
+                        key={type.id}
+                        type={type}
+                        selected={sel.websiteType === type.id}
+                        onSelect={handleWebsiteTypeSelect}
+                        gridPointer={websiteTypePointer}
+                      />
                     ))}
                   </div>
                 </motion.div>
@@ -295,13 +382,13 @@ export default function ProjectEstimator({ estimatorRef }) {
               {currentStep === 3 && (
                 <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
                   <div>
-                    <h3 className="text-xl font-semibold text-slate-900 mb-1">A few business questions</h3>
+                    <h3 className="text-xl font-semibold text-white mb-1">A few business questions</h3>
                     <p className="text-sm text-slate-500">These help us understand your project better.</p>
                   </div>
 
                   {/* Q1 */}
                   <div>
-                    <p className="font-semibold text-slate-900 mb-3">1. Is the website a support tool or a product itself?</p>
+                    <p className="font-semibold text-white/90 mb-3">1. Is the website a support tool or a product itself?</p>
                     <div className="space-y-2">
                       <RadioOption name="q1" value="support" selected={bizQ.q1} onChange={v => setBizQ(prev => ({ ...prev, q1: v }))} label="Support tool" />
                       <RadioOption name="q1" value="product" selected={bizQ.q1} onChange={v => setBizQ(prev => ({ ...prev, q1: v }))} label="Product itself" />
@@ -310,7 +397,7 @@ export default function ProjectEstimator({ estimatorRef }) {
 
                   {/* Q2 */}
                   <div>
-                    <p className="font-semibold text-slate-900 mb-3">2. Will workflows change in the next 12 months?</p>
+                    <p className="font-semibold text-white/90 mb-3">2. Will workflows change in the next 12 months?</p>
                     <div className="space-y-2">
                       <RadioOption name="q2" value="yes" selected={bizQ.q2} onChange={v => setBizQ(prev => ({ ...prev, q2: v }))} label="Yes" />
                       <RadioOption name="q2" value="no" selected={bizQ.q2} onChange={v => setBizQ(prev => ({ ...prev, q2: v }))} label="No" />
@@ -338,7 +425,7 @@ export default function ProjectEstimator({ estimatorRef }) {
 
                   {/* Q3 */}
                   <div>
-                    <p className="font-semibold text-slate-900 mb-3">3. Do users interact or just consume information?</p>
+                    <p className="font-semibold text-white/90 mb-3">3. Do users interact or just consume information?</p>
                     <div className="space-y-2">
                       <RadioOption name="q3" value="consume" selected={bizQ.q3} onChange={v => setBizQ(prev => ({ ...prev, q3: v }))} label="Users only consume information" />
                       <RadioOption name="q3" value="interact" selected={bizQ.q3} onChange={v => setBizQ(prev => ({ ...prev, q3: v }))} label="Users interact" />
@@ -363,20 +450,33 @@ export default function ProjectEstimator({ estimatorRef }) {
           {/* Estimate Panel */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <div className="bg-gradient-to-b from-[#d89a24] via-[#f8c86a] to-[#fff8dc] rounded-2xl p-6 text-[#1f2937] shadow-2xl border border-[#f2d489]">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-white/40 flex items-center justify-center border border-white/50">
-                    <Calculator className="w-5 h-5" />
+              <div
+                className="relative overflow-hidden rounded-2xl p-6 text-white shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_60px_rgba(139,92,246,0.35)] border border-[#8b5cf6]/35 border-t-0"
+                style={{
+                  background:
+                    'linear-gradient(180deg, #000000 0%, #000000 34%, #160826 56%, #2b0f4a 72%, #4c1d95 84%, #8b5cf6 calc(100% - 30px), #ece4ff calc(100% - 14px), #ffffff 100%)',
+                }}
+              >
+                <div
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 55%, rgba(255,255,255,0) 100%)',
+                  }}
+                />
+
+                <div className="relative z-10 flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center border border-gray-500/70">
+                    <Calculator className="w-5 h-5 text-[#8256e6]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Market Estimate</h3>
-                    <p className="text-xs text-[#6b4b12]">Indian market rates</p>
+                    <h3 className="text-3xl font-bold text-white ">Market Estimate</h3>
+                    <p className="text-xs text-white/75">Indian market rates</p>
                   </div>
                 </div>
 
-                <div className="space-y-5">
+                <div className="relative z-10 space-y-5">
                   <div>
-                    <div className="flex items-center gap-2 text-[#6b4b12] mb-2 text-sm">
+                    <div className="flex items-center gap-2 text-white/80 mb-2 text-sm">
                       <IndianRupee className="w-4 h-4" />
                       <span>Estimated Cost Range by Organization</span>
                     </div>
@@ -386,40 +486,44 @@ export default function ProjectEstimator({ estimatorRef }) {
                           const range = estimate.rangesByOrg?.[orgKey];
                           if (!range) return null;
                           return (
-                            <div key={orgKey} className="flex items-center justify-between rounded-lg border border-white/50 bg-white/35 px-3 py-2">
-                              <span className="text-sm font-medium text-[#5a3f10]">{orgSizeLabels[orgKey]}</span>
-                              <span className="text-sm font-bold text-[#1f2937]">
+                            <div key={orgKey} className="flex items-center justify-between rounded-lg border border-white/35 bg-white/12 px-3 py-2">
+                              <span className="text-sm font-medium text-white/90">{orgSizeLabels[orgKey]}</span>
+                              <span className="text-sm font-bold text-white">
                                 {formatINR(range.min)} – {formatINR(range.max)}
                               </span>
                             </div>
                           );
                         })
                       ) : (
-                        <span className="text-[#6b4b12] text-sm">Select type & approach</span>
+                        <span className="text-white/75 text-sm">Select type & approach</span>
                       )}
                     </div>
                   </div>
 
                   {(sel.websiteType || sel.designApproach) && (
                     <div className="pt-4 border-t border-white/40 space-y-2 text-sm">
-                      {sel.websiteType && <div className="flex justify-between"><span className="text-[#6b4b12]">Type</span><span className="text-right">{websiteTypes.find(t => t.id === sel.websiteType)?.label}</span></div>}
-                      {sel.designApproach && <div className="flex justify-between"><span className="text-[#6b4b12]">Design</span><span>{designApproaches.find(d => d.id === sel.designApproach)?.name}</span></div>}
+                      {sel.websiteType && <div className="flex justify-between"><span className="text-white/70">Type</span><span className="text-right text-white">{websiteTypes.find(t => t.id === sel.websiteType)?.label}</span></div>}
+                      {sel.designApproach && <div className="flex justify-between"><span className="text-white/70">Design</span><span className="text-white">{designApproaches.find(d => d.id === sel.designApproach)?.name}</span></div>}
                     </div>
                   )}
 
                   {estimate && (
                     <motion.div
                       key={`${sel.websiteType || 'none'}-${sel.designApproach || 'none'}`}
-                      initial={{ opacity: 0, y: 16, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.4, ease: 'easeOut' }}
-                      className="mt-4 p-4 bg-[#fd85fd] rounded-2xl border border-[#f59e0b]/30 shadow-[0_8px_20px_rgba(245,158,11,0.12)] animate-premium-glow-once"
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                      className="relative mt-4 p-4 rounded-2xl border border-[#f6af35]/35 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.35),0_0_24px_rgba(251,191,36,0.18)]"
+                      style={{
+                        background:
+                          'radial-gradient(circle at 85% 12%, rgba(251,191,36,0.18) 0%, rgba(251,191,36,0.06) 28%, transparent 62%), linear-gradient(180deg, rgba(10,14,33,0.92) 0%, rgba(6,10,24,0.94) 100%)',
+                      }}
                     >
                       <div className="flex gap-2">
-                        <Sparkles className="w-4 h-4 text-[#8a5c08] flex-shrink-0 mt-0.5" />
-                        <p className="text-sm bg-gradient-to-b from-[#5a3f10] to-[#9a7a3c] bg-clip-text text-transparent">
-                          <span className="font-semibold bg-gradient-to-b from-[#1f2937] to-[#5f6b7a] bg-clip-text text-transparent">But we can help you build this sooner and at a better price!</span>{' '}
-                          Contact our specialist.
+                        <Sparkles className="w-4 h-4 text-[#f6af35] flex-shrink-0 mt-0.5" />
+                        <p className="text-sm text-gray-200 leading-relaxed">
+                          <span className="font-semibold text-white">We can help you build this faster and at a better price.</span>{' '}
+                          Speak with our specialist to explore options tailored for your project.
                         </p>
                       </div>
                     </motion.div>
@@ -427,13 +531,13 @@ export default function ProjectEstimator({ estimatorRef }) {
 
                   <button
                     onClick={() => setShowPopup(true)}
-                    className="w-full mt-2 py-3 rounded-xl bg-[#000066] hover:bg-[#1a1a8f] text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                    className="w-full mt-2 py-3 rounded-xl bg-[#f6af35] hover:bg-[#e79d1a] text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
                   >
                     <MessageCircle className="w-4 h-4" /> Contact Us
                   </button>
                 </div>
 
-                <p className="text-xs text-[#6b4b12] mt-5 flex items-start gap-1">
+                <p className="relative z-10 text-xs text-white/80 mt-5 flex items-start gap-1">
                   <Info className="w-3 h-3 flex-shrink-0 mt-0.5" />
                   Indian market rates for reference. Actual pricing depends on specific requirements.
                 </p>

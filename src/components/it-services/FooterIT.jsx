@@ -4,7 +4,13 @@ import { Mail, Linkedin, Phone } from "lucide-react";
 
 export default function FooterIT() {
     return (
-        <footer className="bg-[#000066] pt-16 pb-8">
+        <footer
+            className="pt-16 pb-8"
+            style={{
+                background: 'linear-gradient(180deg, #030712 0%, #020617 100%)',
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+            }}
+        >
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                     {/* Brand */}

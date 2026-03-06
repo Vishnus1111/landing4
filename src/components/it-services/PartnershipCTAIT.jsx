@@ -10,7 +10,14 @@ export default function PartnershipCTAIT() {
   return (
     <>
       <ConsultationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <section id="contact-section" className="relative pt-24 pb-12 bg-[#000066] overflow-hidden">
+      <section
+        id="contact-section"
+        className="relative pt-24 pb-12 overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, #060c2a 0%, #030711 100%)',
+          borderTop: '1px solid rgba(148,163,184,0.35)',
+        }}
+      >
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-96 h-96 bg-[#f6af35] rounded-full opacity-5 blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#ffedb2] rounded-full opacity-5 blur-3xl transform translate-x-1/2 translate-y-1/2" />

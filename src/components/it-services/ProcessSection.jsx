@@ -35,13 +35,20 @@ const steps = [
 
 export default function ProcessSection() {
   return (
-    <section id="our-process" className="py-20 px-6 lg:px-12 bg-[#eef4ff]">
+    <section
+      id="our-process"
+      className="py-20 px-6 lg:px-12"
+      style={{
+        background:
+          'radial-gradient(circle at 20% 10%, rgba(59,130,246,0.05), transparent 40%), radial-gradient(circle at 80% 20%, rgba(234,179,8,0.04), transparent 40%), linear-gradient(180deg, #020617 0%, #050b1f 40%, #070f2b 100%)',
+      }}
+    >
       <div className="container mx-auto max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
           <p className="text-sm font-semibold text-[#1a8a6e] tracking-wider uppercase mb-3">Our Process</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#000066] mb-3">How We Bring Ideas to Life</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#ffffff] mb-3">How We Bring Ideas to Life</h2>
           <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />
-          <p className="text-base text-gray-500 max-w-2xl mx-auto">A proven methodology that delivers exceptional results, on time and on budget.</p>
+          <p className="text-base text-[#94a3b8] max-w-2xl mx-auto">A proven methodology that delivers exceptional results, on time and on budget.</p>
         </motion.div>
 
         <div className="relative">
@@ -52,17 +59,17 @@ export default function ProcessSection() {
                 <div className="group relative z-0 flex flex-col items-center text-center transform-gpu transition-all duration-300 ease-out hover:z-10 hover:-translate-y-[6px] hover:scale-[1.06]">
                   <div className="relative mb-6">
                     <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm transition-all duration-300 ease-out group-hover:scale-[1.08] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)]"
-                      style={{ backgroundColor: step.iconBg }}
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm transition-all duration-300 ease-out group-hover:scale-[1.08] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.35)]"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }}
                     >
-                      <step.icon className="w-7 h-7" style={{ color: step.iconColor }} />
+                      <step.icon className="w-7 h-7" style={{ color: '#fbbf24' }} />
                     </div>
-                    <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white border-2 border-gray-100 shadow flex items-center justify-center">
-                      <span className="text-xs font-bold text-[#000066]">{i + 1}</span>
+                    <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white/10 border border-white/20 shadow flex items-center justify-center backdrop-blur-sm">
+                      <span className="text-xs font-bold text-white">{i + 1}</span>
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-[#000066] mb-2 transition-all duration-300 ease-out group-hover:scale-[1.04]">{step.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed transition-all duration-300 ease-out group-hover:scale-[1.03]">{step.description}</p>
+                  <h3 className="text-lg font-bold text-white mb-2 transition-all duration-300 ease-out group-hover:scale-[1.04]">{step.title}</h3>
+                  <p className="text-sm text-[#94a3b8] leading-relaxed transition-all duration-300 ease-out group-hover:scale-[1.03]">{step.description}</p>
                 </div>
               </motion.div>
             ))}

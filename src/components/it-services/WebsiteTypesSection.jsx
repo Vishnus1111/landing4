@@ -267,8 +267,7 @@ export default function WebsiteTypesSection() {
       id="website-types"
       className="relative overflow-hidden py-[120px] px-6 lg:px-12"
       style={{
-        background:
-          'radial-gradient(circle at 50% 0%, rgba(255,184,0,0.08), transparent 40%), radial-gradient(circle at 20% 70%, rgba(255,184,0,0.05), transparent 50%), linear-gradient(180deg, #050b1f 0%, #08122f 60%, #050b1f 100%)',
+        background: '#000000',
       }}
     >
       <div
@@ -282,7 +281,7 @@ export default function WebsiteTypesSection() {
       <div className="relative z-10 container mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-[42px] font-bold text-white tracking-[-0.02em] mb-3">Choose the Right Website for Your Business</h2>
-          <div className="w-20 h-1 bg-[#f5b642] rounded-[4px] mx-auto mb-4" />
+          <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />
           <p className="text-[17px] text-white/75 max-w-2xl mx-auto">Choose your ideal website format through an interactive carousel. Center cards stay in focus while side cards stay subtle for fast comparison.</p>
         </motion.div>
 
@@ -343,6 +342,7 @@ export default function WebsiteTypesSection() {
                     style={{
                       borderLeftColor: theme.accent,
                       borderColor: isCenter ? tintWithAlpha(theme.accent, 0.25) : 'rgba(0,0,0,0.05)',
+                      borderRightColor: 'transparent',
                       background: isCenter
                         ? type.id === 'educational'
                           ? educationalActiveGradient
