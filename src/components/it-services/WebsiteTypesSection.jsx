@@ -179,18 +179,13 @@ const activeCardGradient = (hexColor) =>
 const educationalActiveGradient =
   'linear-gradient(180deg, #000000 0%, #000000 34%, #160826 56%, #2b0f4a 72%, #4c1d95 84%, #8b5cf6 93%, #ece4ff 98%, #ffffff 100%)';
 
-const educationalOverlayGradient =
-  'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 55%, rgba(255,255,255,0) 100%)';
-
-const activeCardGlow = (hexColor) =>
-  `0 20px 60px rgba(0,0,0,0.5), 0 0 60px ${tintWithAlpha(hexColor, 0.35)}`;
-
-const activeOverlayGradient = (hexColor) =>
-  `linear-gradient(135deg, #000000 20%, ${tintWithAlpha(hexColor, 0.4)} 80%)`;
+const activeCardGlow = () =>
+  '0 20px 60px rgba(0,0,0,0.5)';
 
 export default function WebsiteTypesSection() {
   const scrollRef = useRef(null);
   const scrollEndTimerRef = useRef(null);
+  const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const centerCard = (index, behavior = 'smooth') => {
@@ -210,22 +205,26 @@ export default function WebsiteTypesSection() {
   const goToCard = (index) => {
     const clamped = Math.max(0, Math.min(index, websiteTypes.length - 1));
     centerCard(clamped, 'smooth');
+    activeIndexRef.current = clamped;
     setActiveIndex(clamped);
   };
 
+  const goToRelativeCard = (delta) => {
+    goToCard(activeIndexRef.current + delta);
+  };
+
   const handleScroll = () => {
-    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    if (!container) return;
 
-    const containerRect = scrollRef.current.getBoundingClientRect();
-    const containerCenter = containerRect.left + containerRect.width / 2;
-    const cards = Array.from(scrollRef.current.querySelectorAll('[data-index]'));
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    const cards = Array.from(container.querySelectorAll('[data-index]'));
 
-    let nearestIndex = activeIndex;
+    let nearestIndex = activeIndexRef.current;
     let minDistance = Number.POSITIVE_INFINITY;
 
     cards.forEach((card) => {
-      const rect = card.getBoundingClientRect();
-      const cardCenter = rect.left + rect.width / 2;
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
       const distance = Math.abs(containerCenter - cardCenter);
 
       if (distance < minDistance) {
@@ -234,7 +233,8 @@ export default function WebsiteTypesSection() {
       }
     });
 
-    if (nearestIndex !== activeIndex) {
+    if (nearestIndex !== activeIndexRef.current) {
+      activeIndexRef.current = nearestIndex;
       setActiveIndex(nearestIndex);
     }
 
@@ -248,6 +248,8 @@ export default function WebsiteTypesSection() {
   };
 
   useEffect(() => {
+    activeIndexRef.current = activeIndex;
+
     const handleResize = () => {
       centerCard(activeIndex, 'auto');
     };
@@ -265,7 +267,7 @@ export default function WebsiteTypesSection() {
   return (
     <section
       id="website-types"
-      className="relative overflow-hidden py-[120px] px-6 lg:px-12"
+      className="relative overflow-x-hidden overflow-y-visible py-[120px] px-6 lg:px-12"
       style={{
         background: '#000000',
       }}
@@ -292,7 +294,7 @@ export default function WebsiteTypesSection() {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex gap-3 md:gap-4 overflow-x-auto overflow-y-visible px-2 md:px-8 pb-6 pt-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex gap-3 md:gap-4 overflow-x-auto px-2 md:px-8 pb-6 pt-10 -mt-7 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
           >
             {websiteTypes.map((type, index) => {
@@ -342,27 +344,17 @@ export default function WebsiteTypesSection() {
                     style={{
                       borderLeftColor: theme.accent,
                       borderColor: isCenter ? tintWithAlpha(theme.accent, 0.25) : 'rgba(0,0,0,0.05)',
+                      borderTopWidth: 0,
                       borderRightColor: 'transparent',
                       background: isCenter
                         ? type.id === 'educational'
                           ? educationalActiveGradient
                           : activeCardGradient(theme.accent)
                         : '#ffffff',
-                      boxShadow: isCenter ? activeCardGlow(theme.accent) : '0 10px 30px rgba(0,0,0,0.15)',
+                      boxShadow: isCenter ? activeCardGlow() : '0 10px 30px rgba(0,0,0,0.15)',
                       transformStyle: 'preserve-3d',
                     }}
                   >
-                    {isCenter && (
-                      <div
-                        className="pointer-events-none absolute w-[140%] h-[120%] -top-[20%] -left-[20%] rounded-[60px] opacity-60"
-                        style={{
-                          background: isEducational ? educationalOverlayGradient : activeOverlayGradient(theme.accent),
-                          transform: isEducational ? 'rotate(0deg)' : 'rotate(-12deg)',
-                          opacity: isEducational ? 0.3 : 0.36,
-                        }}
-                      />
-                    )}
-
                     {isCenter && type.id !== 'educational' && (
                       <div
                         className="pointer-events-none absolute inset-x-0 bottom-0 h-[36px]"
@@ -386,19 +378,19 @@ export default function WebsiteTypesSection() {
 
                     <div className="space-y-3 text-sm">
                       <div>
-                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-300') : 'text-gray-500'}`}>Purpose</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 text-white">Purpose</p>
                         <p className={`${isCenter ? (isActiveNonEducational ? 'text-white' : 'text-gray-100') : 'text-gray-900'} leading-relaxed`}>{type.purpose}</p>
                       </div>
 
                       {type.examples && (
                         <div>
-                          <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-300') : 'text-gray-500'}`}>Examples</p>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 text-white/95">Examples</p>
                           <p className={`${isCenter ? (isActiveNonEducational ? 'text-white' : 'text-gray-100') : 'text-gray-900'} leading-relaxed`}>{type.examples}</p>
                         </div>
                       )}
 
                       <div>
-                        <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 ${isCenter ? (isActiveNonEducational ? 'text-gray-100' : 'text-gray-300') : 'text-gray-500'}`}>Key Features</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] mb-1 text-white/95">Key Features</p>
                         <ul className="space-y-1.5">
                           {type.features.map((feature) => (
                             <li key={feature} className={`flex items-start gap-2 ${isCenter ? (isActiveNonEducational ? 'text-white' : 'text-gray-100') : 'text-gray-900'} leading-relaxed`}>
@@ -439,7 +431,7 @@ export default function WebsiteTypesSection() {
 
           <div className="mt-4 flex items-center justify-center gap-3">
             <button
-              onClick={() => goToCard(activeIndex - 1)}
+              onClick={() => goToRelativeCard(-1)}
               className="w-9 h-9 rounded-full border border-[#e4e8f5] bg-white flex items-center justify-center text-[#000066] hover:bg-[#f3f6ff] transition-colors"
               aria-label="Previous website type"
             >
@@ -458,7 +450,7 @@ export default function WebsiteTypesSection() {
             </div>
 
             <button
-              onClick={() => goToCard(activeIndex + 1)}
+              onClick={() => goToRelativeCard(1)}
               className="w-9 h-9 rounded-full border border-[#e4e8f5] bg-white flex items-center justify-center text-[#000066] hover:bg-[#f3f6ff] transition-colors"
               aria-label="Next website type"
             >

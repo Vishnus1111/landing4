@@ -416,7 +416,7 @@ export default function ProjectEstimator({ estimatorRef }) {
                             onChange={e => setBizQ(prev => ({ ...prev, q2detail: e.target.value }))}
                             placeholder="Please describe the expected workflow changes..."
                             rows={3}
-                            className="w-full p-3 rounded-xl border-2 border-[#000066]/30 bg-[#eef1ff]/30 text-sm text-gray-700 resize-none focus:outline-none focus:border-[#000066]"
+                            className="w-full p-3 rounded-xl border-2 border-[#000066]/30 bg-[#eef1ff]/30 text-sm text-white/80 resize-none focus:outline-none focus:border-[#000066]"
                           />
                         </motion.div>
                       )}
