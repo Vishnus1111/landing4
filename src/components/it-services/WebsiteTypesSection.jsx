@@ -184,7 +184,6 @@ const activeCardGlow = () =>
 
 export default function WebsiteTypesSection() {
   const scrollRef = useRef(null);
-  const scrollEndTimerRef = useRef(null);
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -238,13 +237,6 @@ export default function WebsiteTypesSection() {
       setActiveIndex(nearestIndex);
     }
 
-    if (scrollEndTimerRef.current) {
-      clearTimeout(scrollEndTimerRef.current);
-    }
-
-    scrollEndTimerRef.current = setTimeout(() => {
-      centerCard(nearestIndex, 'smooth');
-    }, 90);
   };
 
   useEffect(() => {
@@ -258,9 +250,6 @@ export default function WebsiteTypesSection() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (scrollEndTimerRef.current) {
-        clearTimeout(scrollEndTimerRef.current);
-      }
     };
   }, [activeIndex]);
 

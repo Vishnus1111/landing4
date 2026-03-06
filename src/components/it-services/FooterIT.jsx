@@ -7,8 +7,7 @@ export default function FooterIT() {
         <footer
             className="pt-16 pb-8"
             style={{
-                background: 'linear-gradient(180deg, #030712 0%, #020617 100%)',
-                borderTop: '1px solid rgba(255,255,255,0.06)',
+                background: '#000000',
             }}
         >
             <div className="max-w-7xl mx-auto px-6 lg:px-8">

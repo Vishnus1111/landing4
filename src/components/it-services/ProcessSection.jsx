@@ -39,14 +39,13 @@ export default function ProcessSection() {
       id="our-process"
       className="py-20 px-6 lg:px-12"
       style={{
-        background:
-          'radial-gradient(circle at 20% 10%, rgba(59,130,246,0.05), transparent 40%), radial-gradient(circle at 80% 20%, rgba(234,179,8,0.04), transparent 40%), linear-gradient(180deg, #020617 0%, #050b1f 40%, #070f2b 100%)',
+        background: '#000000',
+        borderTop: '1px solid rgba(148,163,184,0.35)',
       }}
     >
       <div className="container mx-auto max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-          <p className="text-sm font-semibold text-[#1a8a6e] tracking-wider uppercase mb-3">Our Process</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#ffffff] mb-3">How We Bring Ideas to Life</h2>
+          <h2 className="text-4xl font-bold text-white mb-5 -mt-6">How We Build Your Solution</h2>
           <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />
           <p className="text-base text-[#94a3b8] max-w-2xl mx-auto">A proven methodology that delivers exceptional results, on time and on budget.</p>
         </motion.div>

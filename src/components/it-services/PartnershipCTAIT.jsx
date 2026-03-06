@@ -14,7 +14,7 @@ export default function PartnershipCTAIT() {
         id="contact-section"
         className="relative pt-24 pb-12 overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, #060c2a 0%, #030711 100%)',
+          background: '#000000',
           borderTop: '1px solid rgba(148,163,184,0.35)',
         }}
       >
