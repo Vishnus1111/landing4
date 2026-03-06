@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { Button } from '@/Components/ui/button';
+import { Button } from '@/components/ui/button';
 import itHeroVideo from '../../../asset/itherovideo.mp4';
 
 export default function HeroBanner({ onScrollToEstimator, onScrollToServices }) {

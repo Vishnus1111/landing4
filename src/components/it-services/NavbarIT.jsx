@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import itLogo from '../../../asset/itlogo.jpg';
 

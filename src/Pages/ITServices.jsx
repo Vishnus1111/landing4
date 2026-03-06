@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import NavbarIT from '@/Components/it-services/NavbarIT';
-import HeroBanner from '@/Components/it-services/HeroBanner';
-import ServicesGrid from '@/Components/it-services/ServicesGrid';
-import ProjectEstimator from '@/Components/it-services/ProjectEstimator';
-import WebsiteTypesSection from '@/Components/it-services/WebsiteTypesSection';
-import DesignApproachesSection from '@/Components/it-services/designApproachesSection';
-import ProcessSection from '@/Components/it-services/ProcessSection';
-import PartnershipCTAIT from '@/Components/it-services/PartnershipCTAIT';
-import FooterIT from '@/Components/it-services/FooterIT';
+import NavbarIT from '@/components/it-services/NavbarIT';
+import HeroBanner from '@/components/it-services/HeroBanner';
+import ServicesGrid from '@/components/it-services/ServicesGrid';
+import ProjectEstimator from '@/components/it-services/ProjectEstimator';
+import WebsiteTypesSection from '@/components/it-services/WebsiteTypesSection';
+import DesignApproachesSection from '@/components/it-services/designApproachesSection';
+import ProcessSection from '@/components/it-services/ProcessSection';
+import PartnershipCTAIT from '@/components/it-services/PartnershipCTAIT';
+import FooterIT from '@/components/it-services/FooterIT';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ITServices() {

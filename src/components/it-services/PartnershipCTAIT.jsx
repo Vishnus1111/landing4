@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/Components/ui/button';
+import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import ConsultationModal from '@/Components/landing/ConsultationModal';
+import ConsultationModal from '@/components/landing/ConsultationModal';
 
 export default function PartnershipCTAIT() {
   const [isModalOpen, setIsModalOpen] = useState(false);

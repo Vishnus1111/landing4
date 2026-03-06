@@ -1,13 +1,13 @@
 import React from 'react';
-import Navbar from '@/Components/landing/Navbar';
-import Hero from '@/Components/landing/Hero';
-import TrustStrip from '@/Components/landing/TrustStrip';
-import ServicesSection from '@/Components/landing/ServicesSection';
-import WhyChoose from '@/Components/landing/WhyChoose';
-import Achievements from '@/Components/landing/Achievements';
-import WhoWeServe from '@/Components/landing/WhoWeServe';
-import PartnershipCTA from '@/Components/landing/PartnershipCTA';
-import Footer from '@/Components/landing/Footer';
+import Navbar from '@/components/landing/Navbar';
+import Hero from '@/components/landing/Hero';
+import TrustStrip from '@/components/landing/TrustStrip';
+import ServicesSection from '@/components/landing/ServicesSection';
+import WhyChoose from '@/components/landing/WhyChoose';
+import Achievements from '@/components/landing/Achievements';
+import WhoWeServe from '@/components/landing/WhoWeServe';
+import PartnershipCTA from '@/components/landing/PartnershipCTA';
+import Footer from '@/components/landing/Footer';
 
 export default function Home() {
     return (

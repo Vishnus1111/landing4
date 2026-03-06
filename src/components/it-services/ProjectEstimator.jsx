@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/Components/ui/button';
-import { Textarea } from '@/Components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Check, ChevronLeft, ChevronRight, Calculator, IndianRupee, MessageCircle, Info, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ContactPopup } from './ContactForm';

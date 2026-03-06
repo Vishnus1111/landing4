@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Input } from '@/Components/ui/input';
-import { Textarea } from '@/Components/ui/textarea';
-import { Label } from '@/Components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Send, CheckCircle, Shield, Clock, Cpu, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
