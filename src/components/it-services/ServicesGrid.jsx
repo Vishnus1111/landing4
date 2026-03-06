@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Smartphone, Wrench, TestTube } from 'lucide-react';
 import WebsiteDevDetail from './WebsiteDevDetail';
-import TrustStripIT from './TrustStripIT';
 
 const services = [
   {
@@ -161,8 +160,6 @@ export default function ServicesGrid({ onWebsiteDevYes }) {
         <AnimatePresence mode="wait">
           {view === 'grid' && (
             <motion.div key="grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.35 }}>
-              <TrustStripIT />
-
               <div className="text-center mb-16 relative z-10">
                 <h2 className="text-4xl font-bold text-white mb-3">Scalable IT Solutions for Modern Businesses</h2>
                 <div className="w-24 h-1 bg-gradient-to-r from-[#e79d1a] to-[#fff4d6] rounded-full mx-auto mb-4" />

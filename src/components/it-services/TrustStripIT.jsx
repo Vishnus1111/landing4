@@ -23,7 +23,7 @@ const trustItems = [
 
 export default function TrustStripIT() {
   return (
-    <section className="relative -mt-20 mb-10 py-5 bg-[transparent] border-b border-white/20 border-t border-white/20">
+    <section className="relative py-5 bg-[#000000] border-b border-white/20 z-20">
       <div className="w-full max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex flex-wrap lg:flex-nowrap items-center justify-center gap-5">
           {trustItems.map((item, index) => (

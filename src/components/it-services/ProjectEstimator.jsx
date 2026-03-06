@@ -344,8 +344,15 @@ export default function ProjectEstimator({ estimatorRef }) {
                   <h3 className="text-xl font-semibold text-white mb-2">How do you want to build it?</h3>
                   <p className="text-sm text-slate-500 mb-6">The design approach impacts cost, timeline, and scalability.</p>
                   <div className="space-y-4">
-                    {designApproaches.map(approach => (
-                      <button key={approach.id} onClick={() => handleDesignApproachSelect(approach.id)}
+                    {designApproaches.map((approach, index) => (
+                      <motion.div
+                        key={approach.id}
+                        initial={{ opacity: 0, y: 18 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.4, ease: 'easeOut', delay: index * 0.07 }}
+                      >
+                      <button onClick={() => handleDesignApproachSelect(approach.id)}
                         className={cn("group relative w-full p-5 rounded-xl border text-left transition-all duration-300 backdrop-blur-xl",
                           approach.id === 'semi' ? 'overflow-visible' : 'overflow-hidden',
                           sel.designApproach === approach.id
@@ -395,6 +402,7 @@ export default function ProjectEstimator({ estimatorRef }) {
                           </div>
                         </div>
                       </button>
+                      </motion.div>
                     ))}
                   </div>
                 </motion.div>
@@ -409,16 +417,26 @@ export default function ProjectEstimator({ estimatorRef }) {
                   </div>
 
                   {/* Q1 */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.4, ease: 'easeOut', delay: 0.05 }}
+                  >
                     <p className="font-semibold text-white/90 mb-3">1. Is the website a support tool or a product itself?</p>
                     <div className="space-y-2">
                       <RadioOption name="q1" value="support" selected={bizQ.q1} onChange={v => setBizQ(prev => ({ ...prev, q1: v }))} label="Support tool" />
                       <RadioOption name="q1" value="product" selected={bizQ.q1} onChange={v => setBizQ(prev => ({ ...prev, q1: v }))} label="Product itself" />
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Q2 */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.4, ease: 'easeOut', delay: 0.12 }}
+                  >
                     <p className="font-semibold text-white/90 mb-3">2. Will workflows change in the next 12 months?</p>
                     <div className="space-y-2">
                       <RadioOption name="q2" value="yes" selected={bizQ.q2} onChange={v => setBizQ(prev => ({ ...prev, q2: v }))} label="Yes" />
@@ -443,17 +461,22 @@ export default function ProjectEstimator({ estimatorRef }) {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                  </div>
+                  </motion.div>
 
                   {/* Q3 */}
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.4, ease: 'easeOut', delay: 0.19 }}
+                  >
                     <p className="font-semibold text-white/90 mb-3">3. Do users interact or just consume information?</p>
                     <div className="space-y-2">
                       <RadioOption name="q3" value="consume" selected={bizQ.q3} onChange={v => setBizQ(prev => ({ ...prev, q3: v }))} label="Users only consume information" />
                       <RadioOption name="q3" value="interact" selected={bizQ.q3} onChange={v => setBizQ(prev => ({ ...prev, q3: v }))} label="Users interact" />
                       <RadioOption name="q3" value="both" selected={bizQ.q3} onChange={v => setBizQ(prev => ({ ...prev, q3: v }))} label="Both" />
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>

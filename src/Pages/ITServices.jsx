@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import NavbarIT from '@/components/it-services/NavbarIT';
 import HeroBanner from '@/components/it-services/HeroBanner';
+import TrustStripIT from '@/components/it-services/TrustStripIT';
 import ServicesGrid from '@/components/it-services/ServicesGrid';
 import ProjectEstimator from '@/components/it-services/ProjectEstimator';
 import WebsiteTypesSection from '@/components/it-services/WebsiteTypesSection';
@@ -40,7 +41,8 @@ export default function ITServices() {
             setTimeout(() => estimatorRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
           }} onScrollToServices={() => servicesRef.current?.scrollIntoView({ behavior: 'smooth' })} />
         </div>
-        <div ref={servicesRef} className="relative z-20 -mt-16">
+        <TrustStripIT />
+        <div ref={servicesRef} className="relative z-20">
           <ServicesGrid onWebsiteDevYes={handleWebsiteDevYes} />
         </div>
       </div>
