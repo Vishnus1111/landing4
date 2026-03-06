@@ -185,6 +185,8 @@ const activeCardGlow = () =>
 export default function WebsiteTypesSection() {
   const scrollRef = useRef(null);
   const activeIndexRef = useRef(0);
+  const isProgrammaticScrollRef = useRef(false);
+  const programmaticScrollTimeoutRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const centerCard = (index, behavior = 'smooth') => {
@@ -203,9 +205,20 @@ export default function WebsiteTypesSection() {
 
   const goToCard = (index) => {
     const clamped = Math.max(0, Math.min(index, websiteTypes.length - 1));
+
+    isProgrammaticScrollRef.current = true;
+    if (programmaticScrollTimeoutRef.current) {
+      clearTimeout(programmaticScrollTimeoutRef.current);
+    }
+
     centerCard(clamped, 'smooth');
     activeIndexRef.current = clamped;
     setActiveIndex(clamped);
+
+    programmaticScrollTimeoutRef.current = setTimeout(() => {
+      isProgrammaticScrollRef.current = false;
+      programmaticScrollTimeoutRef.current = null;
+    }, 500);
   };
 
   const goToRelativeCard = (delta) => {
@@ -215,6 +228,8 @@ export default function WebsiteTypesSection() {
   const handleScroll = () => {
     const container = scrollRef.current;
     if (!container) return;
+
+    if (isProgrammaticScrollRef.current) return;
 
     const containerCenter = container.scrollLeft + container.clientWidth / 2;
     const cards = Array.from(container.querySelectorAll('[data-index]'));
@@ -250,6 +265,11 @@ export default function WebsiteTypesSection() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+
+      if (programmaticScrollTimeoutRef.current) {
+        clearTimeout(programmaticScrollTimeoutRef.current);
+        programmaticScrollTimeoutRef.current = null;
+      }
     };
   }, [activeIndex]);
 
